@@ -1,6 +1,5 @@
 import {AuthResource} from '@/resourses/AuthResource.ts';
 import {UserResource} from '@/resourses/UserResource.ts';
-import {Pinia} from 'pinia';
 
 export class AuthService {
   authResource: AuthResource;
@@ -33,7 +32,6 @@ export class AuthService {
 
   async getAuthenticatedUser() {
     const {data} = await this.authResource.getAuthenticatedUser()
-    console.log(this.pinia.state.value);
     return data;
   }
 

@@ -38,7 +38,7 @@ const addParticipant = () => {
             </div>
           </div>
           <div class="flex justify-end">
-            <BaseButton type="button" bg-color="bg-gray-800" size="h-14" @click="addParticipant">Add participant</BaseButton>
+            <BaseButton type="button" bg-color="bg-gray-800" @click="addParticipant">Add participant</BaseButton>
           </div>
         </div>
         <BaseButton type="submit">Create the group</BaseButton>

@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Advent Pro', 'sans-serif'],
+        display: ['Gowun Batang', 'sans-serif'],
         body: ['Anaheim', 'sans-serif'],
       }
     },

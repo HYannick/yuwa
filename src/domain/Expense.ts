@@ -6,7 +6,10 @@ export interface Expense {
   description: string;
   amount: number;
   currency: string;
-  paid_by: string;
+  paid_by: {
+    id: string;
+    name: string;
+  };
   share_type: string;
   date: string;
   note?: string;

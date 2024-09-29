@@ -1,21 +1,21 @@
 <script lang="ts" setup>
 import {ref, onMounted, inject} from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import {ExpenseService} from '@/services/ExpenseService.ts';
 import {SettlementService} from '@/services/SettlementService.ts';
 import {useUserStore} from '@/stores/userStore.ts';
 import BaseSelect from '@/components/BaseSelect.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseButton from '@/components/BaseButton.vue';
+import BackButton from '@/components/BackButton.vue';
 
-
+const props = defineProps<{
+  id: string;
+}>();
 const expenseService = inject('expenseService') as ExpenseService;
 const settlementService = inject('settlementService') as SettlementService;
 const userStore = useUserStore();
-
-const route = useRoute();
 const router = useRouter();
-const groupId = route.params.groupId as string;
 
 const participants = ref<any[]>([]);
 const payerId = ref(userStore.user?.id);
@@ -26,12 +26,11 @@ const note = ref('');
 const error = ref('');
 
 const loadParticipants = async () => {
-  const { data, error: fetchError } = await expenseService.fetchGroupParticipants(groupId);
+  const { data, error: fetchError } = await expenseService.fetchGroupParticipants(props.id);
   if (fetchError) {
     error.value = 'Failed to load participants.';
   } else {
     participants.value = data;
-    // Exclude self from payee options if needed
   }
 };
 
@@ -54,7 +53,7 @@ const handleAddSettlement = async () => {
   }
 
   const { error: addError } = await settlementService.addSettlement({
-    groupId,
+    groupId: props.id,
     payerId: payerId.value,
     payeeId: payeeId.value,
     amount: amount.value,
@@ -67,7 +66,7 @@ const handleAddSettlement = async () => {
     error.value = 'Failed to add settlement.';
   } else {
     // Optionally navigate back or reset the form
-    await router.push(`/groups/${groupId}`);
+    await router.push(`/groups/${props.id}`);
   }
 };
 
@@ -79,7 +78,8 @@ onMounted(() => {
 <template>
   <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
     <div class="flex justify-between">
-      <router-link :to="`/groups/${groupId}`" tag="button">Back</router-link>
+
+      <BackButton :to="`/groups/${props.id}`" />
     </div>
     <h2 class="text-center text-4xl font-bold my-10">Record a Settlement</h2>
     <form @submit.prevent="handleAddSettlement">

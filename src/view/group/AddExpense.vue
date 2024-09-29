@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import {ref, onMounted, inject, watch, computed} from 'vue';
-import {useRoute} from 'vue-router';
 import {useUserStore} from '@/stores/userStore.ts';
 import {ExpenseService} from '@/services/ExpenseService.ts';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseSelect from '@/components/BaseSelect.vue';
 import {getUsernameFromParticipants} from '@/utils/common.utils.ts';
+import {GroupParticipant} from '@/domain/GroupParticipant.ts';
+import BackButton from '@/components/BackButton.vue';
 
 const expenseService = inject('expenseService') as ExpenseService;
-const route = useRoute();
-const groupId = route.params.id as string;
 const userStore = useUserStore();
 const description = ref('');
 const amount = ref(0);
@@ -19,8 +18,10 @@ const paidBy = ref(userStore.user?.auth_id);
 const date = ref(new Date().toISOString());
 const note = ref('');
 const shareType = ref('equal');
-
-const participants = ref<any[]>([]);
+const props = defineProps<{
+  id: string;
+}>();
+const participants = ref<GroupParticipant[]>([]);
 const selectedParticipantIds = ref<string[]>([]);
 const participantShares = ref<{ [key: string]: number }>({});
 const participantAdjusted = ref<{ [key: string]: boolean }>({});
@@ -114,7 +115,7 @@ const prefillShares = () => {
 };
 
 const loadParticipants = async () => {
-  const {data, error: fetchError} = await expenseService.fetchGroupParticipants(groupId);
+  const {data, error: fetchError} = await expenseService.fetchGroupParticipants(props.id);
   if (fetchError) {
     error.value = 'Failed to load participants.';
   } else {
@@ -232,7 +233,7 @@ const handleAddExpense = async () => {
   }
 
   const {error: addError} = await expenseService.addExpense({
-    groupId,
+    groupId: props.id,
     description: description.value,
     amount: amount.value,
     currency: currency.value,
@@ -276,7 +277,7 @@ watch(amount, () => {
 <template>
   <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
     <div class="flex justify-between">
-      <router-link :to="`/groups/${groupId}`" tag="button">Back</router-link>
+      <BackButton :to="`/groups/${id}`" />
     </div>
     <h2 class="text-center text-4xl font-bold my-10">Add New Expense</h2>
     <form @submit.prevent="handleAddExpense" class="flex flex-col gap-4">
@@ -335,7 +336,7 @@ watch(amount, () => {
                 :value="participant.id"
                 @change="prefillShares"
             />
-            <label class="flex-1 font-semibold">{{ participant.name || participant.email }}</label>
+            <label class="flex-1 font-semibold">{{ participant.name }}</label>
             <div>
               <BaseInput
                   v-if="shareType !== 'equal'"

@@ -13,6 +13,7 @@ import {GroupResource} from '@/resourses/GroupResource.ts';
 import {UserResource} from '@/resourses/UserResource.ts';
 import {AuthResource} from '@/resourses/AuthResource.ts';
 import {UserService} from '@/resourses/UserService.ts';
+import {ExpenseResource} from '@/resourses/ExpenseResource.ts';
 
 const pinia = createPinia();
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY)
@@ -20,11 +21,11 @@ const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env
 const userResource = new UserResource(supabase);
 const authResource = new AuthResource(supabase);
 const groupResource = new GroupResource(supabase);
-
+const expenseResource = new ExpenseResource(supabase);
 const userService = new UserService(authResource, userResource);
 const authService =  new AuthService(authResource, userResource);
 const groupService = new GroupService(supabase, groupResource, authService);
-const expenseService = new ExpenseService(supabase);
+const expenseService = new ExpenseService(supabase, expenseResource);
 const settlementService = new SettlementService(supabase);
 
 createApp(App).use(router)

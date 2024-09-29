@@ -1,122 +1,80 @@
 import {SupabaseClient} from '@supabase/supabase-js';
 import {Expense} from '@/domain/Expense.ts';
-import {GroupParticipant, sanitizeParticipants} from '@/domain/GroupParticipant.ts';
+import {sanitizeParticipants} from '@/domain/GroupParticipant.ts';
 import {Settlement} from '@/domain/Settlement.ts';
+import {AddExpenseParams, Balances, DetailedDebts} from '@/domain/expenses/types.ts';
+import {ExpenseResource} from '@/resourses/ExpenseResource.ts';
 
-interface AddExpenseParams {
-  groupId: string;
-  description: string;
-  amount: number;
-  currency: string;
-  paidBy: string; // user_id
-  shareType: string;
-  date: string; // ISO date string
-  note: string;
-  participants: {
-    user_id: string;
-    share_value: number | null;
-    amount_owed: number;
-    note: string;
-  }[];
-}
-export interface DetailedDebts {
-  [debtorId: string]: {
-    [creditorId: string]: number;
-  };
-}
-export type Balances = { [userId: string]: number }
+export const calculateBalances = (expenses: Expense[], settlements: Settlement[])  => {
+  // Initialize balances object
+  const balances: Balances = {};
 
-export interface SimplifiedDebt {
-  from: string; // Debtor
-  to: string;   // Creditor
-  amount: number;
-}
+  // Calculate balances
+  expenses.forEach((expense) => {
+    const paidBy = expense.paid_by.id;
+    const totalAmount = expense.amount;
+
+    // Initialize balance for payer if not present
+    if (!balances[paidBy]) {
+      balances[paidBy] = 0;
+    }
+
+    // Add the total amount to the payer's balance
+    balances[paidBy] += totalAmount;
+
+    // Process each participant
+    expense.participants.forEach((participant) => {
+      const userId = participant.user_id;
+      const amountOwed = participant.amount_owed;
+
+      // Initialize balance for participant if not present
+      if (!balances[userId]) {
+        balances[userId] = 0;
+      }
+
+      // Subtract the amount owed from the participant's balance
+      balances[userId] -= amountOwed;
+    });
+  });
+
+  // Adjust balances based on settlements
+  settlements.forEach((settlement) => {
+    const payerId = settlement.payer_id;
+    const payeeId = settlement.payee_id;
+    const amount = settlement.amount;
+
+    // Decrease payer's balance (they owe less)
+    if (!balances[payerId]) {
+      balances[payerId] = 0;
+    }
+    balances[payerId] += amount;
+
+    // Decrease payee's balance (they are owed less)
+    if (!balances[payeeId]) {
+      balances[payeeId] = 0;
+    }
+    balances[payeeId] -= amount;
+  });
+
+  return balances;
+};
+
 
 export class ExpenseService {
   supabaseInstance: SupabaseClient
+  expenseResource: ExpenseResource
 
-  constructor(supaBaseInstance: SupabaseClient) {
+  constructor(supaBaseInstance: SupabaseClient, expenseResource: ExpenseResource) {
     this.supabaseInstance = supaBaseInstance;
+    this.expenseResource = expenseResource;
   }
 
   fetchExpenses = async (groupId: string) => {
-    const {data} = await this.supabaseInstance
-      .from('expenses')
-      .select(`
-      id,
-      description,
-      amount,
-      currency,
-      date,
-      note,
-      created_at,
-      updated_at,
-      paid_by,
-      users!expenses_paid_by_fkey (auth_id, name),
-      participants:expense_participants (
-        user_id,
-        amount_owed,
-        users (id, name)
-      )
-    `)
-      .eq('group_id', groupId)
-      .order('date', {ascending: false});
-
+    const {data} = await this.expenseResource.fetchExpenses(groupId);
     return data || [];
   };
-  calculateBalances(expenses: Expense[], settlements: Settlement[]) {
-    // Initialize balances object
-    const balances: Balances = {};
 
-    // Calculate balances
-    expenses.forEach((expense) => {
-      const paidBy = expense.paid_by;
-      const totalAmount = expense.amount;
 
-      // Initialize balance for payer if not present
-      if (!balances[paidBy]) {
-        balances[paidBy] = 0;
-      }
-
-      // Add the total amount to the payer's balance
-      balances[paidBy] += totalAmount;
-
-      // Process each participant
-      expense.participants.forEach((participant) => {
-        const userId = participant.user_id;
-        const amountOwed = participant.amount_owed;
-
-        // Initialize balance for participant if not present
-        if (!balances[userId]) {
-          balances[userId] = 0;
-        }
-
-        // Subtract the amount owed from the participant's balance
-        balances[userId] -= amountOwed;
-      });
-    });
-
-    // Adjust balances based on settlements
-    settlements.forEach((settlement) => {
-      const payerId = settlement.payer_id;
-      const payeeId = settlement.payee_id;
-      const amount = settlement.amount;
-
-      // Decrease payer's balance (they owe less)
-      if (!balances[payerId]) {
-        balances[payerId] = 0;
-      }
-      balances[payerId] += amount;
-
-      // Decrease payee's balance (they are owed less)
-      if (!balances[payeeId]) {
-        balances[payeeId] = 0;
-      }
-      balances[payeeId] -= amount;
-    });
-
-    return balances;
-  };
 
   async fetchGroupParticipants(groupId: string) {
     const {data, error} = await this.supabaseInstance
@@ -178,66 +136,12 @@ export class ExpenseService {
     return {error: null};
   };
 
-  simplifyDebts(balances: { [userId: string]: number }): SimplifiedDebt[] {
-    const debts: SimplifiedDebt[] = [];
-
-    // Create arrays of creditors and debtors
-    const creditors = [];
-    const debtors = [];
-
-    for (const userId in balances) {
-      const balance = balances[userId];
-      if (balance > 0.01) {
-        creditors.push({ userId, balance });
-      } else if (balance < -0.01) {
-        debtors.push({ userId, balance: -balance }); // Use positive value for owed amount
-      }
-    }
-
-    // Sort creditors and debtors
-    creditors.sort((a, b) => b.balance - a.balance); // Highest balance first
-    debtors.sort((a, b) => b.balance - a.balance);   // Highest debt first
-
-    let i = 0; // Debtor index
-    let j = 0; // Creditor index
-
-    while (i < debtors.length && j < creditors.length) {
-      const debtor = debtors[i];
-      const creditor = creditors[j];
-
-      // Determine the amount to be transferred
-      const amount = Math.min(debtor.balance, creditor.balance);
-
-      // Record the debt
-      debts.push({
-        from: debtor.userId,
-        to: creditor.userId,
-        amount: parseFloat(amount.toFixed(2)),
-      });
-
-      // Adjust the balances
-      debtor.balance -= amount;
-      creditor.balance -= amount;
-
-      // Move to the next debtor or creditor if their balance is settled
-      if (Math.abs(debtor.balance) < 0.01) {
-        i += 1;
-      }
-
-      if (Math.abs(creditor.balance) < 0.01) {
-        j += 1;
-      }
-    }
-
-    return debts;
-  };
-
   calculateIndividualDebts(expenses: Expense[], settlements: Settlement[]): DetailedDebts {
     const debts: DetailedDebts = {};
 
     // Process each expense
     expenses.forEach((expense) => {
-      const paidBy = expense.paid_by;
+      const paidBy = expense.paid_by.id;
 
       expense.participants.forEach((participant) => {
         const userId = participant.user_id;

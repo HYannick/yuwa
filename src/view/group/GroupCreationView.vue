@@ -5,7 +5,7 @@ import BaseInput from '@/components/BaseInput.vue';
 import {GroupService} from '@/services/GroupService.ts';
 import {copyLink} from '@/utils/dom.utils.ts';
 import {generateGroupInvitationLink} from '@/utils/common.utils.ts';
-
+import BackButton from '@/components/BackButton.vue';
 const groupService = inject('groupService') as GroupService;
 
 const invitationLink = ref('');
@@ -29,7 +29,7 @@ const handleCreateGroup = async () => {
 <template>
   <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
     <div class="flex flex-col h-full">
-      <router-link to="/" tag="button">Back</router-link>
+      <BackButton />
       <form  v-if="!invitationLink" class="flex flex-col flex-1" @submit.prevent="handleCreateGroup">
         <h2 class="font-body text-2xl font-bold my-5">Create your group</h2>
         <BaseInput name="name" v-model="groupName" placeholder="Group name" required/>

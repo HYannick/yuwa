@@ -32,7 +32,7 @@ const routes = [
   },
   {
     path: '/join-group',
-    name: 'join-group',
+    name: 'joinGroup',
     component: JoinGroup,
   },
   {
@@ -51,27 +51,30 @@ const routes = [
   },
   {
     path: '/groups/create',
-    name: 'groups-create',
+    name: 'groupCreate',
     component: GroupCreationView,
     meta: { requiresAuth: true },
   },
   {
     path: '/groups/:id',
-    name: 'group-details',
+    name: 'groupDetails',
     component: GroupDashboardView,
     meta: { requiresAuth: true },
+    props: true,
   },
   {
     path: '/groups/:id/add-expense',
-    name: 'add-expense',
+    name: 'addExpense',
     component: AddExpense,
     meta: { requiresAuth: true },
+    props: true
   },
   {
-    path: '/groups/:groupId/add-settlement',
-    name: 'AddSettlement',
+    path: '/groups/:id/add-settlement',
+    name: 'addSettlement',
     component: AddSettlementView,
     meta: { requiresAuth: true },
+    props: true
   }
 ]
 
