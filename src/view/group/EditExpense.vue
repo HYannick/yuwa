@@ -14,12 +14,13 @@ const userStore = useUserStore();
 const description = ref('');
 const amount = ref(0);
 const currency = ref('USD');
-const paidBy = ref(userStore.user?.auth_id);
+const paidBy = ref('');
 const date = ref(new Date().toISOString());
 const note = ref('');
 const shareType = ref('equal');
 const props = defineProps<{
   groupId: string;
+  expenseId: string;
 }>();
 const participants = ref<GroupParticipant[]>([]);
 const selectedParticipantIds = ref<string[]>([]);
@@ -168,7 +169,7 @@ const expenseDebts = computed(() => {
   return debts;
 });
 
-const handleAddExpense = async () => {
+const handleEditExpense = async () => {
   error.value = ''; // Reset error message
 
   if (!userStore.user) {
@@ -181,7 +182,7 @@ const handleAddExpense = async () => {
     return;
   }
 
-  const {error: addError} = await expenseService.addExpense(props.groupId,{
+  const {error: addError} = await expenseService.updateExpense(props.expenseId,{
     groupId: props.groupId,
     description: description.value,
     amount: amount.value,
@@ -202,9 +203,30 @@ const handleAddExpense = async () => {
     alert('Expense added successfully!');
   }
 };
+const loadExpenseDetails = async () => {
+  const { data: expenseData, error: fetchError } = await expenseService.fetchExpenseById(props.expenseId);
+  if (fetchError) {
+    error.value = 'Failed to load expense details.';
+  } else {
+    // Populate form fields with existing expense data
+    description.value = expenseData.description;
+    amount.value = expenseData.amount;
+    currency.value = expenseData.currency;
+    paidBy.value =  expenseData.paid_by.id;
+    date.value = expenseData.date;
+    note.value = expenseData.note;
+    shareType.value = expenseData.share_type;
+    selectedParticipantIds.value = expenseData.participants.map((participant: any) => participant.id);
+    // Prefill participant shares
+    expenseData.participants.forEach((participant: any) => {
+      participantShares.value[participant.user_id] = participant.amount_owed;
+    });
+  }
+};
 
-onMounted(() => {
-  loadParticipants();
+onMounted(async () => {
+  await loadExpenseDetails();
+  await loadParticipants();
 });
 
 watch([shareType, selectedParticipantIds], ([shareType]) => {
@@ -227,8 +249,8 @@ watch(amount, () => {
     <div class="flex justify-between">
       <BackRouterButton :to="`/groups/${groupId}`" />
     </div>
-    <h2 class="text-center text-4xl font-bold font-display my-10">Add New Expense</h2>
-    <form @submit.prevent="handleAddExpense" class="flex flex-col gap-4">
+    <h2 class="text-center text-4xl font-bold font-display my-10">Edit {{description}}</h2>
+    <form @submit.prevent="handleEditExpense" class="flex flex-col gap-4">
       <div>
         <label for="description" class="font-bold">Title</label>
         <BaseInput type="text" v-model="description" id="description" placeholder="Eg: Breakfast in Mirn Station" name="description" required/>

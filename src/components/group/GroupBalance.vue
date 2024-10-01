@@ -86,7 +86,6 @@ const balanceResolved = computed(() => {
 onMounted(() => {
   balances.value = calculateBalances(props.expenses, props.settlements);
   debts.value = expenseService.calculateIndividualDebts(props.expenses, props.settlements);
-  console.log(balances.value)
 })
 
 </script>

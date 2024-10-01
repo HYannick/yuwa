@@ -8,6 +8,10 @@ import JoinGroup from '@/view/group/JoinGroup.vue';
 import GroupDashboardView from '@/view/group/GroupDashboardView.vue';
 import AddExpense from '@/view/group/AddExpense.vue';
 import AddSettlementView from '@/view/group/AddSettlementView.vue';
+import {inject} from 'vue';
+import {GroupService} from '@/services/GroupService.ts';
+import {ExpenseService} from '@/services/ExpenseService.ts';
+import EditExpense from '@/view/group/EditExpense.vue';
 
 const routes = [
   {
@@ -63,7 +67,7 @@ const routes = [
     props: true,
   },
   {
-    path: '/groups/:id/add-expense',
+    path: '/groups/:groupId/add-expense',
     name: 'addExpense',
     component: AddExpense,
     meta: { requiresAuth: true },
@@ -75,7 +79,14 @@ const routes = [
     component: AddSettlementView,
     meta: { requiresAuth: true },
     props: true
-  }
+  },
+  {
+    path: '/groups/:groupId/expenses/:expenseId/edit',
+    name: 'editExpense',
+    component: EditExpense,
+    meta: { requiresAuth: true },
+    props: true
+  },
 ]
 
 

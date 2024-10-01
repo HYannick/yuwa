@@ -24,7 +24,7 @@ export class GroupResource {
 
   async addParticipant(id: string, user_auth_id: string | undefined, accepted: string): Promise<void> {
     try {
-      this.db.from('group_participants').insert({
+      await this.db.from('group_participants').insert({
         group_id: id,
         user_id: user_auth_id,
         status: accepted,

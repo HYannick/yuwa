@@ -10,7 +10,7 @@
     <div class="flex items-center gap-3">
       <div class="flex items-center justify-center rounded-full relative">
         <Bars2Icon type="button" class="w-8 stroke-2"/>
-        <span class="rounded-full w-6 aspect-square bg-orange-100 absolute -bottom-1 right-0 -z-10"></span>
+<!--        <span class="rounded-full w-6 aspect-square bg-orange-100 absolute -bottom-1 right-0 -z-10"></span>-->
       </div>
     </div>
   </div>

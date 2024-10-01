@@ -1,11 +1,11 @@
 import {SupabaseClient} from '@supabase/supabase-js';
-import {Expense} from '@/domain/Expense.ts';
+import {Expense, ParticipantsData} from '@/domain/Expense.ts';
 import {sanitizeParticipants} from '@/domain/GroupParticipant.ts';
 import {Settlement} from '@/domain/Settlement.ts';
 import {AddExpenseParams, Balances, DetailedDebts} from '@/domain/expenses/types.ts';
 import {ExpenseResource} from '@/resourses/ExpenseResource.ts';
 
-export const calculateBalances = (expenses: Expense[], settlements: Settlement[])  => {
+export const calculateBalances = (expenses: Expense[], settlements: Settlement[]) => {
   // Initialize balances object
   const balances: Balances = {};
 
@@ -59,7 +59,6 @@ export const calculateBalances = (expenses: Expense[], settlements: Settlement[]
   return balances;
 };
 
-
 export class ExpenseService {
   supabaseInstance: SupabaseClient
   expenseResource: ExpenseResource
@@ -73,7 +72,6 @@ export class ExpenseService {
     const {data} = await this.expenseResource.fetchExpenses(groupId);
     return data || [];
   };
-
 
 
   async fetchGroupParticipants(groupId: string) {
@@ -93,21 +91,27 @@ export class ExpenseService {
   };
 
 
-  async addExpense(params: AddExpenseParams) {
+  async addExpense(groupId: string, expense: AddExpenseParams) {
+    const {selectedParticipantIds, participantShares} = expense.participantsData;
+    const expenseToAdd = {
+      group_id: groupId,
+      description: expense.description,
+      amount: expense.amount,
+      currency: expense.currency,
+      paid_by: expense.paidBy,
+      share_type: expense.shareType,
+      date: expense.date,
+      note: expense.note,
+    };
+
+    const {participantShares: participantsData, error} = this.calculateParticipantShares(expense, selectedParticipantIds, participantShares);
+
+    if (error) {
+      return {error};
+    }
     const {data: expenseData, error: expenseError} = await this.supabaseInstance
       .from('expenses')
-      .insert([
-        {
-          group_id: params.groupId,
-          description: params.description,
-          amount: params.amount,
-          currency: params.currency,
-          paid_by: params.paidBy,
-          share_type: params.shareType,
-          date: params.date,
-          note: params.note,
-        },
-      ])
+      .insert([expenseToAdd])
       .select();
 
     if (expenseError || !expenseData) {
@@ -117,7 +121,7 @@ export class ExpenseService {
     const expenseId = expenseData[0].id;
 
     // Insert into expense_participants table
-    const expenseParticipants = params.participants.map((p) => ({
+    const expenseParticipants = participantsData.map((p) => ({
       expense_id: expenseId,
       user_id: p.user_id,
       share_value: p.share_value,
@@ -135,6 +139,59 @@ export class ExpenseService {
 
     return {error: null};
   };
+
+  calculateParticipantShares(expense: AddExpenseParams, selectedParticipantIds: string[], participantShares: { [userId: string]: number }): ParticipantsData {
+    let error = '';
+    let participantData: any[] = [];
+
+    if (expense.shareType === 'equal') {
+      const splitAmount = expense.amount / selectedParticipantIds.length;
+      participantData = selectedParticipantIds.map((userId) => ({
+        user_id: userId,
+        share_value: null,
+        amount_owed: parseFloat(splitAmount.toFixed(2)),
+        note: '',
+      }));
+    } else {
+      let totalAdjusted = 0;
+      selectedParticipantIds.forEach((userId) => {
+        const share = participantShares[userId];
+        if (share === undefined || share === null || isNaN(share)) {
+          error = 'Please enter share values for all selected participants.';
+          return;
+        }
+        totalAdjusted += share;
+      });
+
+      if (expense.shareType === 'unequal' && Math.abs(totalAdjusted - expense.amount) > 0.01) {
+        error = 'Total amount must equal the expense amount.';
+        return {participantShares: [], error};
+      }
+
+      if (expense.shareType === 'percentage' && Math.abs(totalAdjusted - 100) > 0.01) {
+        error = 'Total percentage must equal 100%.';
+        return {participantShares: [], error};
+      }
+
+      participantData = selectedParticipantIds.map((userId) => {
+        const share = participantShares[userId];
+        let amountOwed = 0;
+        if (expense.shareType === 'unequal') {
+          amountOwed = share;
+        } else if (expense.shareType === 'percentage') {
+          amountOwed = (expense.amount * share) / 100;
+        }
+        return {
+          user_id: userId,
+          share_value: share,
+          amount_owed: parseFloat(amountOwed.toFixed(2)),
+          note: '',
+        };
+      });
+    }
+
+    return {participantShares: participantData, error};
+  }
 
   calculateIndividualDebts(expenses: Expense[], settlements: Settlement[]): DetailedDebts {
     const debts: DetailedDebts = {};
@@ -190,4 +247,91 @@ export class ExpenseService {
     return debts;
   }
 
+  async fetchExpenseById(id: string) {
+    const {data, error} = await this.supabaseInstance
+      .from('expenses')
+      .select(`
+        id,
+        description,
+        amount,
+        currency,
+        date,
+        note,
+        share_type,
+        created_at,
+        updated_at,
+        paid_by:users!expenses_paid_by_fkey (id:auth_id, name),
+        participants:expense_participants (
+          user_id,
+          amount_owed,
+          details:users (auth_id, name)
+        )
+      `)
+      .eq('id', id) as any;
+
+    if (error || !data || data.length === 0) {
+      return {data: null, error: error || 'Expense not found.'};
+    }
+
+    const expense = data[0] as Expense;
+
+    return {data: expense, error: null};
+  }
+
+  async updateExpense(id: string, expense: AddExpenseParams) {
+    const {selectedParticipantIds, participantShares} = expense.participantsData;
+    const expenseToUpdate = {
+      description: expense.description,
+      amount: expense.amount,
+      currency: expense.currency,
+      paid_by: expense.paidBy,
+      share_type: expense.shareType,
+      date: expense.date,
+      note: expense.note,
+    };
+
+    const {participantShares: participantsData, error} = this.calculateParticipantShares(expense, selectedParticipantIds, participantShares);
+
+    if (error) {
+      return {error};
+    }
+
+    const {error: updateError} = await this.supabaseInstance
+      .from('expenses')
+      .update(expenseToUpdate)
+      .eq('id', id);
+
+    if (updateError) {
+      return {error: updateError};
+    }
+
+    // Update expense_participants table
+    const expenseParticipants = participantsData.map((p) => ({
+      expense_id: id,
+      user_id: p.user_id,
+      share_value: p.share_value,
+      amount_owed: p.amount_owed,
+      note: p.note,
+    }));
+
+
+    const {error: participantsError} = await this.supabaseInstance
+      .from('expense_participants')
+      .delete()
+      .eq('expense_id', id);
+
+    if (participantsError) {
+      return {error: participantsError};
+    }
+
+    const {error: insertError} = await this.supabaseInstance
+      .from('expense_participants')
+      .insert(expenseParticipants);
+
+    if (insertError) {
+      return {error: insertError};
+    }
+
+    return {error: null};
+  }
 }

@@ -4,16 +4,14 @@ export interface AddExpenseParams {
   description: string;
   amount: number;
   currency: string;
-  paidBy: string; // user_id
+  paidBy: string;
   shareType: string;
-  date: string; // ISO date string
+  date: string;
   note: string;
-  participants: {
-    user_id: string;
-    share_value: number | null;
-    amount_owed: number;
-    note: string;
-  }[];
+  participantsData: {
+    selectedParticipantIds: string[],
+    participantShares: { [userId: string]: number },
+  }
 }
 export interface DetailedDebts {
   [debtorId: string]: {

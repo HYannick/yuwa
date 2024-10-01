@@ -19,13 +19,14 @@ export class ExpenseResource {
       currency,
       date,
       note,
+      share_type,
       created_at,
       updated_at,
       paid_by:users!expenses_paid_by_fkey (id:auth_id, name),
       participants:expense_participants (
         user_id,
         amount_owed,
-        users (id, name)
+        details:users (auth_id, name)
       )
     `)
       .eq('group_id', groupId)

@@ -12,8 +12,8 @@ import GroupSettlementsList from '@/components/group/GroupSettlementsList.vue';
 import {GroupParticipant} from '@/domain/GroupParticipant.ts';
 import {Group} from '@/domain/Group.ts';
 
-import BackButton from '@/components/BackButton.vue';
-import {Cog6ToothIcon, ChartPieIcon, BanknotesIcon} from '@heroicons/vue/24/outline';
+import BackRouterButton from '@/components/BackRouterButton.vue';
+import {EllipsisVerticalIcon, ChartPieIcon, BanknotesIcon} from '@heroicons/vue/24/outline';
 import SettingsSidebar from '@/components/group/SettingsSidebar.vue';
 import {useRoute, useRouter} from 'vue-router';
 
@@ -30,6 +30,8 @@ const expenses = ref<Expense[]>([]);
 const settlements = ref<Settlement[]>([]);
 const participants = ref<GroupParticipant[]>([]);
 const groupSettingsVisible = ref(false);
+const router = useRouter();
+const route = useRoute();
 const tabs = [
   {
     icon: BanknotesIcon,
@@ -55,8 +57,6 @@ const loadGroupData = async () => {
   settlements.value = await settlementService.fetchGroupSettlements(props.id);
   loading.value = false;
 };
-const router = useRouter();
-const route = useRoute();
 const openGroupSettings = () => {
   router.push({path: route.path, query: {sidebar: 'open'}});
   groupSettingsVisible.value = true;
@@ -69,7 +69,7 @@ const closeGroupSettings = () => {
   groupSettingsVisible.value = false;
 }
 
-const handleBackButton = () => {
+const handleBackRouterButton = () => {
   if (groupSettingsVisible.value) {
     closeGroupSettings();
   }
@@ -90,16 +90,17 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener('popstate', handleBackButton);
+  window.removeEventListener('popstate', handleBackRouterButton);
 });
+
 </script>
 
 <template>
   <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
     <div class="flex justify-between">
-      <BackButton/>
+      <BackRouterButton/>
       <button @click="openGroupSettings" class="flex items-center p-2">
-        <Cog6ToothIcon class="w-8 stroke-2"/>
+        <EllipsisVerticalIcon class="w-8 stroke-2"/>
       </button>
     </div>
     <div v-if="loading">
@@ -111,14 +112,14 @@ onUnmounted(() => {
         <div class="relative" v-for="tab in tabs" :key="tab.name">
           <button
               @click="switchTab(tab.name)"
-              :class="`flex gap-2 px-4 py-2 font-bold rounded-xl transition-all duration-300 ${currentTab !== tab.name ? 'bg-gray-100 text-gray-800' : 'bg-indigo-500 text-white'}`"
+              :class="`flex gap-2 px-4 py-2 font-bold rounded-xl transition-all duration-300 ${currentTab !== tab.name ? 'bg-gray-100 text-gray-800' : 'bg-gray-800 text-white'}`"
           >
             <component :is="tab.icon" class="w-6 stroke-2"/>
             {{ tab.name }}
           </button>
         </div>
       </div>
-      <div class="bg-gray-50 -mx-5 p-5 rounded-3xl">
+      <div class="-mx-5 p-5 rounded-3xl">
         <div class="lg:hidden">
           <div v-if="currentTab === 'Expenses'">
             <GroupExpensesList :groupId="id" :expenses="expenses" :participants="participants"/>

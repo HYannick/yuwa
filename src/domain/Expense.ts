@@ -17,3 +17,15 @@ export interface Expense {
   updated_at?: Date;
   participants: ExpenseParticipant[];
 }
+
+export type ParticipantsShare = {
+  user_id: string;
+  share_value: number | null;
+  amount_owed: number;
+  note: string;
+}[]
+
+export type ParticipantsData = {
+  participantShares: ParticipantsShare;
+  error: string
+}

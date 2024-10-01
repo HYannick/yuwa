@@ -7,7 +7,7 @@ import {useUserStore} from '@/stores/userStore.ts';
 import BaseSelect from '@/components/BaseSelect.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseButton from '@/components/BaseButton.vue';
-import BackButton from '@/components/BackButton.vue';
+import BackRouterButton from '@/components/BackRouterButton.vue';
 
 const props = defineProps<{
   id: string;
@@ -79,7 +79,7 @@ onMounted(() => {
   <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
     <div class="flex justify-between">
 
-      <BackButton :to="`/groups/${props.id}`" />
+      <BackRouterButton :to="`/groups/${props.id}`" />
     </div>
     <h2 class="text-center text-4xl font-bold my-10">Record a Settlement</h2>
     <form @submit.prevent="handleAddSettlement">

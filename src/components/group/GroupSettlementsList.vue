@@ -3,9 +3,9 @@
     <GroupSectionHeader label="Settlements" :to="`/groups/${groupId}/add-settlement`" :action-icon="PlusIcon" />
 
     <div v-if="settlements.length === 0">
-      <img src="@/assets/illustrations/undraw_checklist.svg" alt="No expenses" class="w-1/2 mx-auto"/>
+      <img src="@/assets/illustrations/undraw_checklist.svg" alt="No settlement" class="w-1/2 mx-auto"/>
       <p class="text-center text-gray-500 mt-5">No settlements have been recorded yet.</p>
-      <BaseRouterLinkButton :to="`/groups/${groupId}/add-settlement`" size="small" class="w-1/2  mx-auto mt-5 flex items-center justify-center px-4 h-12 bg-indigo-500 text-white rounded-xl">
+      <BaseRouterLinkButton :to="`/groups/${groupId}/add-settlement`" size="small" class="w-1/2  mx-auto mt-5 flex items-center justify-center px-4 h-12 bg-gray-800 text-white rounded-xl">
         Add Settlement
       </BaseRouterLinkButton>
     </div>
