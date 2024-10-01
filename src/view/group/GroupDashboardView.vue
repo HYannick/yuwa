@@ -10,12 +10,14 @@ import {Settlement} from '@/domain/Settlement.ts';
 import {SettlementService} from '@/services/SettlementService.ts';
 import GroupSettlementsList from '@/components/group/GroupSettlementsList.vue';
 import {GroupParticipant} from '@/domain/GroupParticipant.ts';
-import {Group} from '@/domain/Group.ts';
 
 import BackRouterButton from '@/components/BackRouterButton.vue';
 import {EllipsisVerticalIcon, ChartPieIcon, BanknotesIcon} from '@heroicons/vue/24/outline';
 import SettingsSidebar from '@/components/group/SettingsSidebar.vue';
 import {useRoute, useRouter} from 'vue-router';
+import {useGroupStore} from '@/stores/groupStore.ts';
+import {storeToRefs} from 'pinia';
+import {useSidebarHistoryState} from '@/composables/useSidebarHistoryState.ts';
 
 const props = defineProps<{
   id: string;
@@ -24,7 +26,6 @@ const props = defineProps<{
 const groupService = inject('groupService') as GroupService;
 const expenseService = inject('expenseService') as ExpenseService;
 const settlementService = inject('settlementService') as SettlementService;
-const group = ref<Group | null>(null);
 const loading = ref(true);
 const expenses = ref<Expense[]>([]);
 const settlements = ref<Settlement[]>([]);
@@ -45,27 +46,35 @@ const currentTab = ref('Expenses');
 const switchTab = (tab: string) => {
   currentTab.value = tab;
 }
-
-const loadGroupData = async () => {
-  loading.value = true;
-
-  const {data: groupData} = await groupService.fetchGroupDetails(props.id);
-
-  group.value = groupData.group;
-  participants.value = groupData.participants;
+const {currentGroup} = storeToRefs(useGroupStore());
+const {resetCurrentGroup} = useGroupStore();
+const {onBackButtonPressed, pushTo, resetRoute} = useSidebarHistoryState();
+const setBalanceData = async () => {
   expenses.value = await expenseService.fetchExpenses(props.id);
   settlements.value = await settlementService.fetchGroupSettlements(props.id);
+}
+const loadGroupData = async () => {
+  loading.value = true;
+  if(currentGroup.value) {
+    participants.value = currentGroup.value.participants;
+    await setBalanceData();
+    loading.value = false;
+    return;
+  }
+
+  await groupService.fetchGroupDetails(props.id);
+
+  participants.value = currentGroup.value.participants;
+  await setBalanceData();
   loading.value = false;
 };
 const openGroupSettings = () => {
-  router.push({path: route.path, query: {sidebar: 'open'}});
+  pushTo('groupSettings');
   groupSettingsVisible.value = true;
 }
 
 const closeGroupSettings = () => {
-  let newQuery = {...route.query};
-  delete newQuery.sidebar;
-  router.replace({path: route.path, query: newQuery});
+  resetRoute('groupSettings');
   groupSettingsVisible.value = false;
 }
 
@@ -77,20 +86,12 @@ const handleBackRouterButton = () => {
 
 onMounted(() => {
   loadGroupData();
-  window.addEventListener('popstate', () => {
-    if (groupSettingsVisible.value) {
-      closeGroupSettings();
-    } else {
-      if (window.history.length <= 1) {
-
-        router.push('/');
-      }
-    }
-  });
+  window.addEventListener('popstate', () => onBackButtonPressed(groupSettingsVisible.value, closeGroupSettings));
 });
 
 onUnmounted(() => {
   window.removeEventListener('popstate', handleBackRouterButton);
+  resetCurrentGroup();
 });
 
 </script>
@@ -106,8 +107,8 @@ onUnmounted(() => {
     <div v-if="loading">
       <p>Loading...</p>
     </div>
-    <template v-else-if="group">
-      <GroupHeader :group="group" :expenses="expenses" :settlements="settlements"/>
+    <template v-else-if="currentGroup">
+      <GroupHeader :group="currentGroup" :expenses="expenses" :settlements="settlements"/>
       <div class="flex justify-center gap-4 mb-5 lg:hidden">
         <div class="relative" v-for="tab in tabs" :key="tab.name">
           <button
@@ -125,8 +126,8 @@ onUnmounted(() => {
             <GroupExpensesList :groupId="id" :expenses="expenses" :participants="participants"/>
           </div>
           <div v-else-if="currentTab === 'Balances'" class="my-10">
-            <GroupBalance :expenses="expenses" :settlements="settlements" :participants="participants" :currency="group.currency"/>
-            <GroupSettlementsList :settlements="settlements" :group-id="group.id" :participants="participants"/>
+            <GroupBalance :expenses="expenses" :settlements="settlements" :participants="participants" :currency="currentGroup.currency"/>
+            <GroupSettlementsList :settlements="settlements" :group-id="currentGroup.id" :participants="participants"/>
           </div>
         </div>
         <div class="hidden lg:flex gap-10">
@@ -134,9 +135,9 @@ onUnmounted(() => {
             <GroupExpensesList :groupId="id" :expenses="expenses"/>
           </div>
           <div class="w-1/3">
-            <GroupBalance :expenses="expenses" :settlements="settlements" :participants="participants" :currency="group.currency"/>
+            <GroupBalance :expenses="expenses" :settlements="settlements" :participants="participants" :currency="currentGroup.currency"/>
           </div>
-          <GroupSettlementsList :settlements="settlements" :group-id="group.id" :participants="participants"/>
+          <GroupSettlementsList :settlements="settlements" :group-id="currentGroup.id" :participants="participants"/>
         </div>
       </div>
       <router-view/>
@@ -144,21 +145,8 @@ onUnmounted(() => {
 
 
     <Transition name="slide">
-      <SettingsSidebar v-if="groupSettingsVisible && group" :group="group" :participants="participants" @close="closeGroupSettings"/>
+      <SettingsSidebar v-if="groupSettingsVisible && currentGroup" :group="currentGroup" :participants="participants" @close="closeGroupSettings"/>
     </Transition>
 
   </section>
 </template>
-
-<style scoped>
-.slide-enter-active,
-.slide-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.slide-enter-from,
-.slide-leave-to {
-  opacity: 0.5;
-  transform: translateX(100%);
-}
-</style>

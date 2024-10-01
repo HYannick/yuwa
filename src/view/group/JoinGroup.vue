@@ -72,7 +72,7 @@ const joinGroup = async () => {
     // Redirect to login with return URL
     await router.push({
       name: 'login',
-      query: {returnUrl: route.fullPath, origin: 'join-group', groupName: groupNameFromURL, groupId: groupIdFromURL}
+      query: {returnUrl: route.fullPath, origin: 'groups/join', groupName: groupNameFromURL, groupId: groupIdFromURL}
     });
     return;
   }

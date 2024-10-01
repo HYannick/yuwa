@@ -14,6 +14,7 @@ import {UserResource} from '@/resourses/UserResource.ts';
 import {AuthResource} from '@/resourses/AuthResource.ts';
 import {UserService} from '@/resourses/UserService.ts';
 import {ExpenseResource} from '@/resourses/ExpenseResource.ts';
+import {VueQrcodeReader} from 'vue-qrcode-reader';
 
 const pinia = createPinia();
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY)
@@ -24,12 +25,13 @@ const groupResource = new GroupResource(supabase);
 const expenseResource = new ExpenseResource(supabase);
 const userService = new UserService(authResource, userResource);
 const authService =  new AuthService(authResource, userResource);
-const groupService = new GroupService(supabase, groupResource, authService);
+const groupService = new GroupService(supabase, groupResource, authService, pinia);
 const expenseService = new ExpenseService(supabase, expenseResource);
 const settlementService = new SettlementService(supabase);
 
 createApp(App).use(router)
   .use(pinia)
+  .use(VueQrcodeReader)
   .provide('supabaseClient', supabase)
   .provide('authService', authService)
   .provide('expenseService', expenseService)

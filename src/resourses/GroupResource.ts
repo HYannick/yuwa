@@ -84,7 +84,7 @@ export class GroupResource {
   }
 
   async deleteGroup(groupId: string): Promise<void> {
-    this.db
+    await this.db
       .from('groups')
       .delete()
       .eq('id', groupId);

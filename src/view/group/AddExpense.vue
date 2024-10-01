@@ -228,7 +228,7 @@ watch(amount, () => {
       <BackRouterButton :to="`/groups/${groupId}`" />
     </div>
     <h2 class="text-center text-4xl font-bold font-display my-10">Add New Expense</h2>
-    <form @submit.prevent="handleAddExpense" class="flex flex-col gap-4">
+    <form @submit.prevent="handleAddExpense" class="flex flex-col gap-4 pb-5">
       <div>
         <label for="description" class="font-bold">Title</label>
         <BaseInput type="text" v-model="description" id="description" placeholder="Eg: Breakfast in Mirn Station" name="description" required/>

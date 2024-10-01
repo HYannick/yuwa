@@ -14,7 +14,7 @@ export const getUsernameFromParticipants = (userId: string, participants: GroupP
 };
 
 export const generateGroupInvitationLink = (group: any) => {
-  return `${window.location.origin}/join-group?token=${group.invitation_token}&group_name=${group.name}&group_id=${group.id}`;
+  return `${window.location.origin}/groups/join?token=${group.invitation_token}&group_name=${group.name}&group_id=${group.id}`;
 }
 
 export const generateToken = (): string => {

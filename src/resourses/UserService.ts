@@ -1,5 +1,7 @@
 import {AuthResource} from '@/resourses/AuthResource.ts';
 import {UserResource} from '@/resourses/UserResource.ts';
+import {Expense} from '@/domain/Expense.ts';
+import {Settlement} from '@/domain/Settlement.ts';
 
 export class UserService {
   authResource: AuthResource;
@@ -33,7 +35,7 @@ export class UserService {
     return { debts, totalOwed };
   }
 
-  private calculateIndividualDebts(expensesData, settlementsData, userId) {
+  private calculateIndividualDebts(expensesData: Expense[], settlementsData: Settlement[], userId: string) {
     const debts: Array<{ groupId: string; groupName: string; creditorId: string; creditorName: string; amount: number }> = [];
 
     const userDebts: { [creditorId: string]: { amount: number; creditorName: string; groupName: string, groupId: string } } = {};

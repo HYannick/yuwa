@@ -34,21 +34,22 @@ import BaseRouterLinkButton from '@/components/BaseRouterLinkButton.vue';
 import GroupSectionHeader from '@/components/group/GroupSectionHeader.vue';
 import GroupExpenseCard from '@/components/group/GroupExpenseCard.vue';
 import {useRoute, useRouter} from 'vue-router';
+import {useSidebarHistoryState} from '@/composables/useSidebarHistoryState.ts';
 
 defineProps<{ groupId: any, expenses: Expense[] }>();
 const router = useRouter();
-const route = useRoute()
+const route = useRoute();
+const { pushTo, resetRoute, onBackButtonPressed} = useSidebarHistoryState();
 const selectedExpense = ref<Expense | null >(null)
-const closeDetails = () => {
-  let newQuery = {...route.query};
-  delete newQuery.expenseCard;
-  router.replace({path: route.path, query: newQuery});
-  selectedExpense.value = null;
-}
 
 const openDetails = (expense: Expense) => {
-  router.push({path: route.path, query: {expenseCard: 'open'}});
   selectedExpense.value = expense;
+  pushTo('expenseCard');
+}
+
+const closeDetails = () => {
+  selectedExpense.value = null;
+  resetRoute('expenseCard');
 }
 
 const handleBackRouterButton = () => {
@@ -58,15 +59,7 @@ const handleBackRouterButton = () => {
 }
 
 onMounted(() => {
-  window.addEventListener('popstate', () => {
-    if (selectedExpense.value) {
-      closeDetails();
-    } else {
-      if (window.history.length <= 1) {
-        router.push('/');
-      }
-    }
-  });
+  window.addEventListener('popstate', () => onBackButtonPressed(selectedExpense.value, closeDetails));
 });
 
 onUnmounted(() => {
@@ -74,15 +67,3 @@ onUnmounted(() => {
 });
 
 </script>
-<style>
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.slide-up-enter-from,
-.slide-up-leave-to {
-  opacity: 0;
-  transform: translateY(100px);
-}
-</style>

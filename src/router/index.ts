@@ -12,6 +12,7 @@ import {inject} from 'vue';
 import {GroupService} from '@/services/GroupService.ts';
 import {ExpenseService} from '@/services/ExpenseService.ts';
 import EditExpense from '@/view/group/EditExpense.vue';
+import GroupRequest from '@/view/group/GroupRequest.vue';
 
 const routes = [
   {
@@ -21,7 +22,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/register',
+    path: '/auth/register',
     name: 'register',
     component: RegisterView,
     beforeEnter: async (to, from, next) => {
@@ -35,12 +36,7 @@ const routes = [
     }
   },
   {
-    path: '/join-group',
-    name: 'joinGroup',
-    component: JoinGroup,
-  },
-  {
-    path: '/login',
+    path: '/auth/login',
     name: 'login',
     component: LoginView,
     beforeEnter: async (to, from, next) => {
@@ -52,6 +48,18 @@ const routes = [
         next()
       }
     }
+  },
+  {
+    path: '/groups/join',
+    name: 'joinGroup',
+    component: JoinGroup,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/groups/request',
+    name: 'groupRequest',
+    component: GroupRequest,
+    meta: { requiresAuth: true },
   },
   {
     path: '/groups/create',
@@ -104,7 +112,7 @@ router.beforeEach(async (to, from, next) => {
     if (userStore.user) {
       next()
     } else {
-      next('/login')
+      next('/auth/login')
     }
   } else {
     next()

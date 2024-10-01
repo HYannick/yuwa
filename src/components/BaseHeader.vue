@@ -9,17 +9,35 @@
     </div>
     <div class="flex items-center gap-3">
       <div class="flex items-center justify-center rounded-full relative">
-        <Bars2Icon type="button" class="w-8 stroke-2"/>
-<!--        <span class="rounded-full w-6 aspect-square bg-orange-100 absolute -bottom-1 right-0 -z-10"></span>-->
+        <Bars2Icon type="button" class="w-8 stroke-2" @click="openMenu"/>
       </div>
     </div>
+    <MenuLayout :menu-open="menuOpen" @close="closeMenu" />
   </div>
 </template>
 <script lang="ts" setup>
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 import {Bars2Icon} from '@heroicons/vue/24/outline';
+import {useRoute, useRouter} from 'vue-router';
+import MenuLayout from '@/components/MenuLayout.vue';
+import {useSidebarHistoryState} from '@/composables/useSidebarHistoryState.ts';
 
+const menuOpen = ref(false);
 defineProps<{ username: string }>()
+const router = useRouter();
+const route = useRoute();
+const {onBackButtonPressed, pushTo, resetRoute} = useSidebarHistoryState();
+const openMenu = () => {
+  menuOpen.value = true;
+  pushTo('menu')
+}
+
+const closeMenu = () => {
+  resetRoute('menu')
+  menuOpen.value = false;
+}
+
+window.addEventListener('popstate', () => onBackButtonPressed(menuOpen.value, closeMenu));
 
 const greetings = computed(() => {
   const currentHour: number = new Date().getHours();

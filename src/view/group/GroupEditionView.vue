@@ -19,7 +19,7 @@ const addParticipant = () => {
 <template>
   <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
     <div class="flex flex-col h-full">
-      <router-link to="/groups/create" tag="button">Back</router-link>
+      <router-link to="groupCreate" tag="button">Back</router-link>
       <h2 class="font-body text-2xl font-bold my-5">Create your group</h2>
       <form class="flex flex-col flex-1">
         <input v-model="groupForm.name" class="rounded-xl p-4 w-full bg-gray-200 font-semibold" placeholder="Group name" type="text" id="name"

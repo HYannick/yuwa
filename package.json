@@ -19,6 +19,7 @@
     "qrious": "^4.0.2",
     "uuid": "^10.0.0",
     "vue": "^3.4.26",
+    "vue-qrcode-reader": "^5.5.10",
     "vue-router": "4"
   },
   "devDependencies": {

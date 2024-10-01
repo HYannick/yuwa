@@ -6,14 +6,17 @@ import {AuthService} from '@/services/AuthService.ts';
 import {GroupResource} from '@/resourses/GroupResource.ts';
 import {GroupNameEmptyException} from '@/domain/exceptions/GroupNameEmptyException.ts';
 import {sanitizeParticipants} from '@/domain/GroupParticipant.ts';
+import {useGroupStore} from '@/stores/groupStore.ts';
 
 
 export class GroupService {
   supabaseClient: SupabaseClient;
   authService: AuthService;
   groupResource: GroupResource
+  store: any;
 
-  constructor(supabaseClient: SupabaseClient, groupResource: GroupResource, authService: AuthService) {
+  constructor(supabaseClient: SupabaseClient, groupResource: GroupResource, authService: AuthService, pinia: any) {
+    this.store = useGroupStore(pinia);
     this.supabaseClient = supabaseClient;
     this.authService = authService;
     this.groupResource = groupResource;
@@ -26,12 +29,12 @@ export class GroupService {
 
     const {invitationToken, tokenExpiresAt} = this.generateInvitationToken();
 
-    const owner = (await this.authService.getAuthenticatedUser()).user?.id;
-    const {data, error} = await this.groupResource.createGroup(groupName, owner, invitationToken, tokenExpiresAt);
+    const authenticatedUserId = (await this.authService.getAuthenticatedUser()).user?.id;
+    const {data, error} = await this.groupResource.createGroup(groupName, authenticatedUserId, invitationToken, tokenExpiresAt);
     const group = data![0];
 
-    await this.groupResource.addParticipant(group.id, owner, 'accepted');
-
+    await this.groupResource.addParticipant(group.id, authenticatedUserId, 'accepted');
+    await this.fetchUserGroups(authenticatedUserId!);
     return {data, error};
   }
 
@@ -117,6 +120,8 @@ export class GroupService {
       return {data: null, error};
     }
 
+    this.store.setGroups(groups);
+
     return {data: groups, error: null};
   }
 
@@ -128,7 +133,7 @@ export class GroupService {
     }
 
     const participants = sanitizeParticipants(groupData.participants)
-
+    this.store.setCurrentGroup({...groupData, participants});
     return {data: {group: groupData, participants}, error: null};
   };
 
@@ -140,6 +145,7 @@ export class GroupService {
 
   async deleteGroup(groupId: string) {
     await this.groupResource.deleteGroup(groupId);
+    return {error: null};
   };
 
   private generateInvitationToken() {
