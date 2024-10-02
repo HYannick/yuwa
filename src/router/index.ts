@@ -101,13 +101,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve({ left: 0, top: 0 })
-      }, 500)
-    })
-  },
+
 })
 
 router.beforeEach(async (to, from, next) => {

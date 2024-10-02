@@ -11,7 +11,7 @@
         <span class="text-gray-500">{{ new Date(expense.date).toDateString() }}</span>
         <h2 class="text-4xl text-center font-bold font-display">{{ expense.description }}</h2>
       </div>
-      <hr class="h-1 my-4 mx-auto w-24 bg-gray-100 rounded border-transparent"/>
+      <hr class="h-1 my-4 mx-auto w-24 bg-gray-200 dark:bg-gray-600 rounded border-transparent"/>
       <div class="mb-2 text-center">
         <p class="text-4xl font-semibold">{{ expense.amount.toFixed(2) }} {{ expense.currency }}</p>
         <p>Paid by <span class="font-bold">{{ expense.paid_by.name }}</span></p>

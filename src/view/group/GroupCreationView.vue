@@ -31,9 +31,9 @@ const handleCreateGroup = async () => {
     <div class="flex flex-col h-full">
       <BackRouterButton />
       <form  v-if="!invitationLink" class="flex flex-col flex-1" @submit.prevent="handleCreateGroup">
-        <h2 class="font-body text-2xl font-bold my-5">Create your group</h2>
+        <h2 class="font-display text-4xl font-bold text-center my-10 text-gray-800 dark:text-zinc-400">Create your group</h2>
         <BaseInput name="name" v-model="groupName" placeholder="Group name" required/>
-        <hr class="h-1 my-8 mx-auto w-52 bg-gray-100 rounded border-transparent"/>
+        <hr class="h-1 my-8 mx-auto w-52 bg-gray-200 dark:bg-gray-600 rounded border-transparent"/>
         <BaseButton type="submit" v-if="!invitationLink">Create the group</BaseButton>
       </form>
       <div v-else class="text-center">

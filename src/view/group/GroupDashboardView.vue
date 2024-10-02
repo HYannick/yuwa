@@ -123,7 +123,7 @@ const closeControls = () => {
     <Transition name="fade" mode="out-in">
       <div v-if="loading" class="flex flex-col w-full mt-40 justify-center items-center">
         <img src="@/assets/illustrations/undraw_loading.svg" alt="loading" class="w-2/3"/>
-        <p class="text-2xl mt-10">One moment...</p>
+        <p class="text-2xl mt-10 text-gray-800 dark:text-zinc-400">One moment...</p>
       </div>
       <div v-else-if="currentGroup">
         <GroupHeader :group="currentGroup" :expenses="expenses" :settlements="settlements"/>
@@ -131,7 +131,7 @@ const closeControls = () => {
           <div class="relative" v-for="tab in tabs" :key="tab.name">
             <button
                 @click="switchTab(tab.name)"
-                :class="`flex gap-2 px-4 py-2 font-bold rounded-xl transition-all duration-300 ${currentTab !== tab.name ? 'bg-gray-100 text-gray-800 dark:text-zinc-400' : 'bg-gray-800 dark:bg-gray-50 text-white'}`"
+                :class="`flex gap-2 px-4 py-2 font-bold rounded-xl transition-all duration-300 ${currentTab !== tab.name ? 'bg-zinc-200 dark:bg-zinc-800 text-gray-800 dark:text-zinc-400' : 'bg-gray-800 dark:bg-orange-500 text-zinc-100 dark:text-zinc-800'}`"
             >
               <component :is="tab.icon" class="w-6 stroke-2"/>
               {{ tab.name }}
@@ -167,21 +167,21 @@ const closeControls = () => {
       <Transition name="slide">
         <div class="flex flex-col gap-5 mb-5 items-end" v-if="controlsOpen">
           <router-link :to="`/groups/${currentGroup!.id}/add-expense`" class="flex gap-5 items-center">
-            <span class="font-bold">Add Expense</span>
-            <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-gray-50 flex items-center justify-center">
-              <CreditCardIcon class="w-6 stroke-2 stroke-white"/>
+            <span class="font-bold text-gray-800 dark:text-zinc-400">Add Expense</span>
+            <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-amber-600 flex items-center justify-center">
+              <CreditCardIcon class="w-6 stroke-2 stroke-zinc-50"/>
             </div>
           </router-link>
           <router-link :to="`/groups/${currentGroup!.id}/add-settlement`" class="flex gap-5 items-center">
-            <span class="font-bold">Add Settlement</span>
-            <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-gray-50 flex items-center justify-center">
-              <ScaleIcon class="w-6 stroke-2 stroke-white"/>
+            <span class="font-bold text-gray-800 dark:text-zinc-400">Add Settlement</span>
+            <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-amber-600 flex items-center justify-center">
+              <ScaleIcon class="w-6 stroke-2 stroke-zinc-50"/>
             </div>
           </router-link>
         </div>
       </Transition>
-      <button class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-gray-50 flex items-center justify-center" @click="toggleControls">
-        <PlusIcon class="w-6 stroke-2 stroke-white"/>
+      <button class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-amber-600 flex items-center justify-center" @click="toggleControls">
+        <PlusIcon class="w-6 stroke-2 text-zinc-100 dark:text-zinc-100"/>
       </button>
     </div>
     <Transition name="fade">

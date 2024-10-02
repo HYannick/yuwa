@@ -8,6 +8,7 @@ import BaseSelect from '@/components/BaseSelect.vue';
 import {getUsernameFromParticipants} from '@/utils/common.utils.ts';
 import {GroupParticipant} from '@/domain/GroupParticipant.ts';
 import BackRouterButton from '@/components/BackRouterButton.vue';
+import BaseTextarea from '@/components/BaseTextarea.vue';
 
 const expenseService = inject('expenseService') as ExpenseService;
 const userStore = useUserStore();
@@ -227,21 +228,17 @@ watch(amount, () => {
     <div class="flex justify-between">
       <BackRouterButton :to="`/groups/${groupId}`" />
     </div>
-    <h2 class="text-center text-4xl font-bold font-display my-10">Add New Expense</h2>
+    <h2 class="text-center text-4xl font-bold font-display my-10 text-gray-800 dark:text-zinc-400">Add New Expense</h2>
     <form @submit.prevent="handleAddExpense" class="flex flex-col gap-4 pb-5">
       <div>
-        <label for="description" class="font-bold">Title</label>
-        <BaseInput type="text" v-model="description" id="description" placeholder="Eg: Breakfast in Mirn Station" name="description" required/>
+        <BaseInput label="Title" type="text" v-model="description" id="description" placeholder="Eg: Breakfast in Mirn Station" name="description" required/>
       </div>
       <div class="flex gap-4">
-        <div>
-          <label for="amount" class="font-bold">Amount</label>
-          <BaseInput v-model.number="amount" id="amount" type="number" step="0.01" name="amount" required/>
-        </div>
-
         <div class="flex-1">
-          <label for="currency" class="font-bold">Currency</label>
-          <BaseSelect v-model="currency" id="currency" name="currency" :options="[
+          <BaseInput label="Amount" v-model.number="amount" id="amount" type="number" step="0.01" name="amount" required/>
+        </div>
+        <div class="flex-1">
+          <BaseSelect label="Currency" v-model="currency" id="currency" name="currency" :options="[
             { value: 'USD', label: 'USD' },
             { value: 'EUR', label: 'EUR' },
           ]" required/>
@@ -250,41 +247,35 @@ watch(amount, () => {
 
       <div class="flex gap-4 w-100">
         <div class="flex-1">
-          <label for="paid-by" class="font-bold">Paid By</label>
-          <BaseSelect v-model="paidBy!" id="paid-by" name="paid-by" class="rounded-xl p-5 w-full bg-gray-100 font-semibold" :options="[
+          <BaseSelect label="Paid by" v-model="paidBy!" id="paid-by" name="paid-by" class="rounded-xl p-5 w-full bg-gray-100 font-semibold" :options="[
             ...participants.map((participant) => ({ value: participant.id, label: participant.name })),
           ]" required />
         </div>
         <div class="flex-1">
-          <label for="date" class="font-bold">Date</label>
-          <BaseInput name="date" v-model="date" id="date" type="date" required class="w-100"/>
+          <BaseInput label="Date" name="date" v-model="date" id="date" type="date" required class="w-100"/>
         </div>
       </div>
       <div>
-        <label for="paid-by" class="font-bold">Note</label>
-        <textarea v-model="note" class="rounded-xl p-5 w-full bg-gray-100 font-semibold" placeholder="Eg: Amazing trip to Antares"
-                  id="note"></textarea>
+        <BaseTextarea label="Note" v-model="note" name="note" />
       </div>
-      <!-- Share Type -->
       <div>
-        <label for="share-type" class="font-bold">Share Type</label>
-        <BaseSelect v-model="shareType" id="share-type" name="share-type" class="rounded-xl p-5 w-full bg-gray-100 font-semibold w-100" :options="[
+        <BaseSelect label="Share type" v-model="shareType" id="share-type" name="share-type" class="rounded-xl p-5 w-full bg-gray-100 font-semibold w-100" :options="[
           { value: 'equal', label: 'Equally' },
           { value: 'unequal', label: 'Unequally' },
           { value: 'percentage', label: 'By Percentage' },
         ]" required/>
       </div>
       <div>
-        <h3 class="font-bold">Split With</h3>
+        <h3 class="font-bold text-gray-800 dark:text-zinc-400 mb-2">Split With</h3>
         <div class="flex gap-2 flex-col">
-          <div class="flex items-center gap-4 border-2 h-16 px-4 rounded-xl" v-for="participant in participants" :key="participant.id">
+          <div class="flex items-center gap-4 border-2 dark:border-zinc-700 h-16 px-4 rounded-xl bg-zinc-50 dark:bg-zinc-900" v-for="participant in participants" :key="participant.id">
             <input
                 type="checkbox"
                 v-model="selectedParticipantIds"
                 :value="participant.id"
                 @change="prefillShares"
             />
-            <label class="flex-1 font-semibold">{{ participant.name }}</label>
+            <label class="flex-1 font-semibold text-gray-800 dark:text-zinc-400">{{ participant.name }}</label>
             <div class="w-20">
               <BaseInput
                   v-if="shareType !== 'equal'"
@@ -294,7 +285,6 @@ watch(amount, () => {
                   :placeholder="shareType === 'percentage' ? 'Percentage' : 'Amount'"
                   type="number"
                   size="small"
-                  color="bg-white"
                   text-color="text-gray-800 dark:text-zinc-400"
                   step="0.01"
                   class="w-full text-center border-2"

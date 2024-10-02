@@ -1,6 +1,7 @@
 <template>
-  <label :for="name" class="font-bold text-gray-800 dark:text-zinc-400 block mb-2" v-if="label">{{ label }}</label>
-  <input v-model="value" :class="`rounded-xl ${sizeCss} px-5 w-full ${color} ${textColor} font-semibold`" :type="type" :placeholder="placeholder" :required="required" :name="name" />
+  <label :for="name" class="font-bold text-gray-800 dark:text-zinc-400 block mb-2">{{label}}</label>
+  <textarea v-model="value" class="rounded-xl p-5 w-full bg-zinc-200 font-semibold dark:bg-zinc-800" :name="name" :placeholder="placeholder"
+            :id="name"></textarea>
 </template>
 <script setup lang="ts">
 import {computed} from 'vue';
@@ -23,7 +24,7 @@ const props = withDefaults(defineProps<{
   color?: string,
   textColor?: string
 }>(), {
-  placeholder: 'Input Text',
+  placeholder: 'Eg: Amazing trip to Antares',
   type: 'text',
   inputFor: '',
   label: '',

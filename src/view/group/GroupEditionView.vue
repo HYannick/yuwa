@@ -24,7 +24,7 @@ const addParticipant = () => {
       <form class="flex flex-col flex-1">
         <input v-model="groupForm.name" class="rounded-xl p-4 w-full bg-gray-200 font-semibold" placeholder="Group name" type="text" id="name"
                name="name" required>
-        <hr class="h-1 my-8 mx-auto w-52 bg-gray-100 rounded border-transparent"/>
+        <hr class="h-1 my-8 mx-auto w-52 bg-gray-200 dark:bg-gray-600 rounded border-transparent"/>
         <div class="mb-4 flex-1">
           <p class="mb-4 font-bold">Participants</p>
           <div class="flex flex-col gap-2 mb-4">

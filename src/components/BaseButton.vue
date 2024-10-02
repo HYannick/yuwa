@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
   bgColor?: string,
   size?: 'small' | 'medium' | 'large';
 }>(), {
-  bgColor: 'bg-gray-900',
+  bgColor: 'bg-gray-900 dark:bg-amber-600',
   size: 'medium'
 });
 

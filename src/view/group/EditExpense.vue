@@ -8,6 +8,7 @@ import BaseSelect from '@/components/BaseSelect.vue';
 import {getUsernameFromParticipants} from '@/utils/common.utils.ts';
 import {GroupParticipant} from '@/domain/GroupParticipant.ts';
 import BackRouterButton from '@/components/BackRouterButton.vue';
+import BaseTextarea from '@/components/BaseTextarea.vue';
 
 const expenseService = inject('expenseService') as ExpenseService;
 const userStore = useUserStore();
@@ -283,9 +284,7 @@ watch(amount, () => {
         </div>
       </div>
       <div>
-        <label for="paid-by" class="font-bold">Note</label>
-        <textarea v-model="note" class="rounded-xl p-5 w-full bg-gray-100 font-semibold" placeholder="Eg: Amazing trip to Antares"
-                  id="note"></textarea>
+        <BaseTextarea label="Note" v-model="note" name="note" />
       </div>
       <!-- Share Type -->
       <div>

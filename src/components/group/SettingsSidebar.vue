@@ -1,33 +1,33 @@
 <template>
-  <div class="w-full fixed z-90 top-0 right-0 bg-gray-50 h-screen p-5">
+  <div class="w-full fixed z-90 top-0 right-0 bg-zinc-100 dark:bg-zinc-900 h-screen p-5">
     <div class="flex flex-col rounded-xl pb-4">
       <button @click="$emit('close')" class="flex items-center p-2 w-10 aspect-square">
-        <ArrowLeftIcon class="w-6 stroke-[3px]"/>
+        <ArrowLeftIcon class="w-6 stroke-[3px] text-zinc-800 dark:text-zinc-400"/>
       </button>
-      <h2 class="text-4xl font-bold font-display mt-10 ml-10">Settings</h2>
+      <h2 class="text-4xl font-bold text-zinc-800 dark:text-zinc-400 font-display mt-10 ml-10">Settings</h2>
     </div>
     <hr class="my-5">
     <div>
-      <p class="text font-semibold mb-4">Edit Group name</p>
-      <form @submit.prevent="handleUpdateGroup" class="flex items-center gap-4">
+      <p class="text font-semibold mb-4 text-zinc-800 dark:text-zinc-400">Edit Group name</p>
+      <form @submit.prevent="handleUpdateGroup" class="flex gap-4">
         <BaseInput v-model="groupUpdateName" id="name" name="groupName" required />
-        <BaseButton type="submit" class="bg-teal-400">
-          <RocketLaunchIcon class="w-6 stroke-2"/>
-        </BaseButton>
+        <div class="w-20 rounded-xl flex justify-center items-center bg-gray-800 dark:bg-amber-600">
+          <PencilSquareIcon class="w-6 stroke-2 stroke-zinc-50"/>
+        </div>
       </form>
       <p v-if="errorEditGroup">{{ errorEditGroup }}</p>
     </div>
     <hr class="my-5">
     <div>
-      <p class="text font-semibold mb-4">Participants</p>
+      <p class="text font-semibold mb-4 text-zinc-800 dark:text-zinc-400">Participants</p>
       <div class="flex gap-2">
-        <div class="rounded bg-zinc-100 dark:bg-zinc-900 py-2 px-4" v-for="participant in participants">
+        <div class="rounded bg-zinc-200 dark:bg-zinc-700 py-2 px-4 text-zinc-800 dark:text-zinc-400" v-for="participant in participants">
           <span class="text-sm font-bold">{{ participant.name }}</span></div>
       </div>
     </div>
     <hr class="my-5">
     <div>
-      <p class="text font-semibold mb-4">Share group</p>
+      <p class="text font-semibold mb-4 text-zinc-800 dark:text-zinc-400">Share group</p>
       <div class="border-4 border-gray-800 rounded-xl p-5 flex justify-between items-center w-2/3 aspect-square" v-if="qrCode">
         <img :src="qrCode" alt="QR code to join the group" class="w-full mx-auto"/>
       </div>
@@ -39,10 +39,10 @@
     <hr class="my-5">
     <div>
       <div class="flex gap-2 items-center mb-4">
-        <ExclamationTriangleIcon class="w-6 stroke-2"/>
-        <p class="text font-semibold">Danger Zone</p>
+        <ExclamationTriangleIcon class="w-6 stroke-2 text-zinc-800 dark:text-zinc-400"/>
+        <p class="text font-semibold text-zinc-800 dark:text-zinc-400">Danger Zone</p>
       </div>
-      <BaseButton type="button" @click="handleDeleteGroup" class="delete-button" bg-color="bg-red-400 w-full">
+      <BaseButton type="button" @click="handleDeleteGroup" class="delete-button" bg-color="bg-red-400 dark:bg-red-800 w-full">
         Delete group
       </BaseButton>
     </div>
@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import {copyLink} from '@/utils/dom.utils.ts';
 import BaseButton from '@/components/BaseButton.vue';
-import {ArrowLeftIcon, ExclamationTriangleIcon, RocketLaunchIcon} from '@heroicons/vue/24/outline';
+import {ArrowLeftIcon, ExclamationTriangleIcon, PencilSquareIcon} from '@heroicons/vue/24/outline';
 import BaseInput from '@/components/BaseInput.vue';
 import {computed, inject, ref} from 'vue';
 // noinspection TypeScriptCheckImport

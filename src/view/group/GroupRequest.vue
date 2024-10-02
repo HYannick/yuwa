@@ -3,7 +3,7 @@
     <div class="flex justify-between">
       <BackRouterButton to="/"/>
     </div>
-    <h2 class="text-center text-4xl font-bold font-display my-10">Ready to join a group?</h2>
+    <h2 class="text-center text-4xl font-bold font-display my-10 text-gray-800 dark:text-zinc-400">Ready to join a group?</h2>
     <div v-if="qrCodeScannerOpened">
       <qrcode-stream
           @detect="onDetect"
@@ -14,12 +14,12 @@
     </div>
     <img v-else src="@/assets/illustrations/undraw_meet_the_team.svg" alt="join group"/>
     <div class="flex-1 flex flex-col justify-center gap-4">
-      <p class="text-xl text-center mt-10">Get the link from your group to join! or scan the qrcode</p>
+      <p class="text-xl text-center mt-10 text-gray-800 dark:text-zinc-400">Get the link from your group to join! or scan the qrcode</p>
       <BaseInput name="groupURL" placeholder="Enter the group Link" v-model="groupURL"/>
       <div class="flex gap-4">
         <BaseRouterLinkButton :to="`/groups/join?${sanitizedURL}`" class="flex-1">Join a group</BaseRouterLinkButton>
-        <div class="w-14 flex justify-center items-center border-2 border-gray-800 rounded-xl" @click="openQRCodeScanner">
-          <QrCodeIcon class="w-8 stroke-gray-800"/>
+        <div class="w-14 flex justify-center items-center border-2 border-gray-800 dark:border-zinc-400 rounded-xl" @click="openQRCodeScanner">
+          <QrCodeIcon class="w-8 text-gray-800 dark:text-zinc-400"/>
         </div>
       </div>
     </div>

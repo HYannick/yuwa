@@ -21,7 +21,7 @@
                 {{ (-balance).toFixed(2) }}
               </div>
             </div>
-            <div class="w-32 text-center">
+            <div class="w-32 text-center text-gray-800 dark:text-zinc-400">
               {{ getUsernameFromParticipants(userId, participants) }}
             </div>
             <div class="relative w-1/2 h-8">
@@ -40,22 +40,24 @@
 
   </div>
 
-  <hr class="h-1 my-8 mx-auto w-52 bg-gray-100 rounded border-transparent"/>
-  <h2 class="font-semibold text-2xl">Debts</h2>
-  <div v-if="Object.keys(debts).length === 0">
-    <img src="@/assets/illustrations/undraw_winners.svg" alt="No expenses" class="w-1/2 mx-auto"/>
-    <p class="text-center text-gray-500 mt-5">All balances are settled!</p>
+  <hr class="h-1 my-8 mx-auto w-52 bg-gray-200 dark:bg-gray-600 rounded border-transparent"/>
+  <div class="my-20">
+    <h2 class="font-semibold text-2xl text-gray-800 dark:text-zinc-400">Debts</h2>
+    <div v-if="Object.keys(debts).length === 0">
+      <img src="@/assets/illustrations/undraw_winners.svg" alt="No expenses" class="w-1/2 mx-auto"/>
+      <p class="text-center text-gray-800 dark:text-zinc-400 mt-5">All balances are settled!</p>
+    </div>
+    <ul v-else>
+      <li v-for="(creditors, debtorId) in debts" :key="debtorId">
+        <p><strong>{{ getUsernameFromParticipants(debtorId, participants) }} owes:</strong></p>
+        <ul>
+          <li v-for="(amount, creditorId) in creditors" :key="creditorId">
+            {{ formatCurrency(amount, 'EUR') }} to {{ getUsernameFromParticipants(creditorId, participants) }}
+          </li>
+        </ul>
+      </li>
+    </ul>
   </div>
-  <ul v-else>
-    <li v-for="(creditors, debtorId) in debts" :key="debtorId">
-      <p><strong>{{ getUsernameFromParticipants(debtorId, participants) }} owes:</strong></p>
-      <ul>
-        <li v-for="(amount, creditorId) in creditors" :key="creditorId">
-          {{ formatCurrency(amount, 'EUR') }} to {{ getUsernameFromParticipants(creditorId, participants) }}
-        </li>
-      </ul>
-    </li>
-  </ul>
 </template>
 <script setup lang="ts">
 import {formatCurrency, getUsernameFromParticipants} from '@/utils/common.utils.ts';

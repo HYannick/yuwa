@@ -8,6 +8,7 @@ import BaseSelect from '@/components/BaseSelect.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BackRouterButton from '@/components/BackRouterButton.vue';
+import BaseTextarea from '@/components/BaseTextarea.vue';
 
 const props = defineProps<{
   id: string;
@@ -81,12 +82,11 @@ onMounted(() => {
 
       <BackRouterButton :to="`/groups/${props.id}`" />
     </div>
-    <h2 class="text-center text-4xl font-bold my-10">Record a Settlement</h2>
-    <form @submit.prevent="handleAddSettlement">
+    <h2 class="text-center text-4xl font-bold font-display my-10 text-gray-800 dark:text-zinc-400">Add a Settlement</h2>
+    <form @submit.prevent="handleAddSettlement" class="flex flex-col gap-5">
       <!-- Payer -->
       <div>
-        <label class="font-bold" for="payer">Payer:</label>
-        <BaseSelect v-model="payerId!" id="payer" name="payer" :options="[
+        <BaseSelect label="Payer" v-model="payerId!" id="payer" name="payer" :options="[
           { label: 'Select payer', value: '' },
           ...participants.map((participant) => ({
             label: participant.name || participant.email,
@@ -94,10 +94,8 @@ onMounted(() => {
           })),
         ]" required />
       </div>
-      <!-- Payee -->
       <div>
-        <label class="font-bold" for="payee">Payee:</label>
-        <BaseSelect v-model="payeeId!" id="payee" name="payee" :options="[
+        <BaseSelect label="Beneficiary" v-model="payeeId!" id="payee" name="payee" :options="[
           { label: 'Select beneficiary', value: '' },
           ...participants.map((participant) => ({
             label: participant.name || participant.email,
@@ -105,21 +103,14 @@ onMounted(() => {
           })),
         ]" required />
       </div>
-      <!-- Amount -->
       <div>
-        <label class="font-bold" for="amount">Amount:</label>
-        <BaseInput v-model.number="amount" type="number" step="0.01" id="amount" name="amount" required />
+        <BaseInput label="Amount" v-model.number="amount" type="number" step="0.01" id="amount" name="amount" required />
       </div>
-      <!-- Date -->
       <div>
-        <label class="font-bold" for="date">Date:</label>
-        <BaseInput v-model="date" type="date" id="date" name="date" required />
+        <BaseInput label="Date" v-model="date" type="date" id="date" name="date" required />
       </div>
-      <!-- Note -->
       <div>
-        <label class="font-bold" for="note">Note:</label>
-        <textarea v-model="note" class="rounded-xl p-5 w-full bg-gray-100 font-semibold" placeholder="Eg: Amazing trip to Antares"
-                  id="note"></textarea>
+        <BaseTextarea label="Note" v-model="note" name="note" />
       </div>
       <BaseButton type="submit">Add Settlement</BaseButton>
     </form>

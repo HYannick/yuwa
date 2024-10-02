@@ -85,12 +85,13 @@ onMounted(() => {
         </div>
       </div>
       <Transition name="fade" mode="out-in">
-        <div v-if="loading" class="flex flex-col w-full justify-center items-center">
+        <div v-if="loading && !groups.length" class="flex flex-col w-full justify-center items-center">
           <img src="@/assets/illustrations/undraw_loading.svg" alt="loading" class="w-2/3"/>
-          <p class="text-2xl mt-10">One moment...</p>
+          <p class="text-2xl mt-10 text-gray-800 dark:text-zinc-400">One moment...</p>
         </div>
-        <div v-else-if="groups.length == 0" class="flex h-full items-end justify-center">
-          <h3 class="text-gray-400 font-black text-2xl text-center mb-56">
+        <div v-else-if="groups.length == 0" class="flex flex-col w-full items-end justify-center">
+          <img src="@/assets/illustrations/undraw_loading.svg" alt="loading" class="w-2/3"/>
+          <h3 class="text-gray-400 font-black text-2xl text-center  mt-10 mb-56">
             <span class="font-normal text-xl">You are not part of a group yet :(</span>
             <br>
             Join or Create a new group!
@@ -116,25 +117,25 @@ onMounted(() => {
         <Transition name="slide">
           <div class="flex flex-col gap-5 mb-5 items-end" v-if="controlsOpen">
             <router-link to="/groups/create" class="flex gap-5 items-center">
-              <span class="font-bold">New group</span>
-              <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-gray-50 flex items-center justify-center">
-                <UserGroupIcon class="w-6 stroke-2 stroke-white"/>
+              <span class="font-bold text-zinc-800 dark:text-zinc-400">New group</span>
+              <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-amber-600 flex items-center justify-center">
+                <UserGroupIcon class="w-6 stroke-2 stroke-zinc-50"/>
               </div>
             </router-link>
             <router-link to="/groups/request" class="flex gap-5 items-center">
-              <span class="font-bold">Join a group</span>
-              <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-gray-50 flex items-center justify-center">
-                <ArrowLeftEndOnRectangleIcon class="w-6 stroke-2 stroke-white"/>
+              <span class="font-bold text-zinc-800 dark:text-zinc-400">Join a group</span>
+              <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-amber-600 flex items-center justify-center">
+                <ArrowLeftEndOnRectangleIcon class="w-6 stroke-2 stroke-zinc-50"/>
               </div>
             </router-link>
           </div>
         </Transition>
         <button class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-amber-600 flex items-center justify-center" @click="toggleControls">
-          <PlusIcon class="w-6 stroke-2 stroke-white"/>
+          <PlusIcon class="w-6 stroke-2 text-zinc-100 dark:text-zinc-100"/>
         </button>
       </div>
       <Transition name="fade">
-        <div v-if="controlsOpen" class="fixed inset-0 bg-zinc-100 dark:bg-zinc-900 bg-opacity-90" @click="closeControls"></div>
+        <div v-if="controlsOpen" class="fixed inset-0 bg-zinc-100 dark:bg-zinc-900 bg-opacity-90 z-10" @click="closeControls"></div>
       </Transition>
     </div>
   </section>

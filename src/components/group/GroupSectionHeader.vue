@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-2 mb-5">
-    <component :is="headerIcon" class="w-5 stroke-2 stroke-gray-800" />
-    <h2 class="font-semibold text-2xl">{{label}}</h2>
+    <component :is="headerIcon" class="w-5 stroke-2 stroke-gray-800 dark:stroke-zinc-400" />
+    <h2 class="font-semibold text-2xl dark:text-zinc-400">{{label}}</h2>
   </div>
 </template>
 <script setup lang="ts">

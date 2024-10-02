@@ -2,7 +2,7 @@
   <RouterLink
       :to="to"
       tag="button"
-      :class="`flex justify-center text-white items-center text-center ${bgColor} font-bold rounded-xl px-4 ${sizeCss}`">
+      :class="`flex justify-center text-zinc-50 items-center text-center ${bgColor} font-bold rounded-xl px-4 ${sizeCss} dark:text-zinc-100`">
     <slot/>
   </RouterLink>
 </template>
@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<{
   bgColor?: string,
   size?: 'small' | 'medium' | 'large';
 }>(), {
-  bgColor: 'bg-gray-900',
+  bgColor: 'bg-gray-900 dark:bg-amber-600',
   size: 'medium'
 })
 
