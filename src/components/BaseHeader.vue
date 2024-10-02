@@ -18,14 +18,11 @@
 <script lang="ts" setup>
 import {computed, ref} from 'vue';
 import {Bars2Icon} from '@heroicons/vue/24/outline';
-import {useRoute, useRouter} from 'vue-router';
 import MenuLayout from '@/components/MenuLayout.vue';
 import {useSidebarHistoryState} from '@/composables/useSidebarHistoryState.ts';
 
 const menuOpen = ref(false);
 defineProps<{ username: string }>()
-const router = useRouter();
-const route = useRoute();
 const {onBackButtonPressed, pushTo, resetRoute} = useSidebarHistoryState();
 const openMenu = () => {
   menuOpen.value = true;

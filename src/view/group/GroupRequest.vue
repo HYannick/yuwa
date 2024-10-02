@@ -16,10 +16,10 @@
     <div class="flex-1 flex flex-col justify-center gap-4">
       <p class="text-xl text-center mt-10">Get the link from your group to join! or scan the qrcode</p>
       <BaseInput name="groupURL" placeholder="Enter the group Link" v-model="groupURL"/>
-      <div class="flex gap-5">
+      <div class="flex gap-4">
         <BaseRouterLinkButton :to="`/groups/join?${sanitizedURL}`" class="flex-1">Join a group</BaseRouterLinkButton>
-        <div class="w-10 flex content-center bg-gray-800" @click="openQRCodeScanner">
-          <QrCodeIcon class="w-8"/>
+        <div class="w-14 flex justify-center items-center border-2 border-gray-800 rounded-xl" @click="openQRCodeScanner">
+          <QrCodeIcon class="w-8 stroke-gray-800"/>
         </div>
       </div>
     </div>

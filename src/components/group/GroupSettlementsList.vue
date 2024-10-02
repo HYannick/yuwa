@@ -1,6 +1,6 @@
 <template>
   <div class="pb-10">
-    <GroupSectionHeader label="Settlements" :to="`/groups/${groupId}/add-settlement`" :action-icon="PlusIcon" />
+    <GroupSectionHeader label="Settlements" :to="`/groups/${groupId}/add-settlement`" :header-icon="ScaleIcon" />
 
     <div v-if="settlements.length === 0">
       <img src="@/assets/illustrations/undraw_checklist.svg" alt="No settlement" class="w-1/2 mx-auto"/>
@@ -10,7 +10,7 @@
       </BaseRouterLinkButton>
     </div>
     <ul v-else class="flex flex-col gap-3">
-      <li v-for="settlement in settlements" :key="settlement.id" class="px-4 py-2 rounded-xl bg-white flex justify-between flex flex-col">
+      <li v-for="settlement in settlements" :key="settlement.id" class="px-4 py-2 rounded-xl bg-gray-100 flex justify-between flex flex-col">
         <p class="text-indigo-600">{{ new Date(settlement.date).toLocaleDateString() }}</p>
         <div class="flex justify-between">
           <p>
@@ -30,7 +30,7 @@ import {defineProps} from 'vue';
 import {Settlement} from '@/domain/Settlement.ts';
 import {formatCurrency, getUsernameFromParticipants} from '@/utils/common.utils.ts';
 import BaseRouterLinkButton from '@/components/BaseRouterLinkButton.vue';
-import {PlusIcon} from '@heroicons/vue/24/outline';
+import {PlusIcon, ScaleIcon} from '@heroicons/vue/24/outline';
 import GroupSectionHeader from '@/components/group/GroupSectionHeader.vue';
 defineProps<{ groupId: string, settlements: Settlement[], participants: any }>();
 </script>

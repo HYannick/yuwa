@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full fixed z-50 top-0 right-0 bg-gray-50 h-screen p-5">
+  <div class="w-full fixed z-90 top-0 right-0 bg-gray-50 h-screen p-5">
     <div class="flex flex-col rounded-xl pb-4">
       <button @click="$emit('close')" class="flex items-center p-2 w-10 aspect-square">
         <ArrowLeftIcon class="w-6 stroke-[3px]"/>

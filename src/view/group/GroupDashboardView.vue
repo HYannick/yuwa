@@ -12,7 +12,7 @@ import GroupSettlementsList from '@/components/group/GroupSettlementsList.vue';
 import {GroupParticipant} from '@/domain/GroupParticipant.ts';
 
 import BackRouterButton from '@/components/BackRouterButton.vue';
-import {EllipsisVerticalIcon, ChartPieIcon, BanknotesIcon} from '@heroicons/vue/24/outline';
+import {EllipsisVerticalIcon, ChartPieIcon, BanknotesIcon, PlusIcon, ScaleIcon, CreditCardIcon,} from '@heroicons/vue/24/outline';
 import SettingsSidebar from '@/components/group/SettingsSidebar.vue';
 import {useRoute, useRouter} from 'vue-router';
 import {useGroupStore} from '@/stores/groupStore.ts';
@@ -86,13 +86,29 @@ const handleBackRouterButton = () => {
 
 onMounted(() => {
   loadGroupData();
-  window.addEventListener('popstate', () => onBackButtonPressed(groupSettingsVisible.value, closeGroupSettings));
+  window.addEventListener('popstate', () => {
+    if(groupSettingsVisible.value) {
+      onBackButtonPressed(groupSettingsVisible.value, closeGroupSettings)
+    } else if (controlsOpen.value) {
+      onBackButtonPressed(controlsOpen.value, closeControls);
+    }
+  });
 });
 
 onUnmounted(() => {
   window.removeEventListener('popstate', handleBackRouterButton);
   resetCurrentGroup();
 });
+
+const controlsOpen = ref(false);
+const toggleControls = () => {
+  pushTo('controls');
+  controlsOpen.value = !controlsOpen.value;
+}
+const closeControls = () => {
+  resetRoute('controls');
+  controlsOpen.value = false;
+}
 
 </script>
 
@@ -140,13 +156,33 @@ onUnmounted(() => {
           <GroupSettlementsList :settlements="settlements" :group-id="currentGroup.id" :participants="participants"/>
         </div>
       </div>
-      <router-view/>
     </template>
-
-
     <Transition name="slide">
       <SettingsSidebar v-if="groupSettingsVisible && currentGroup" :group="currentGroup" :participants="participants" @close="closeGroupSettings"/>
     </Transition>
-
+    <div class="fixed right-5 bottom-5 z-50 flex flex-col items-end">
+      <Transition name="slide">
+        <div class="flex flex-col gap-5 mb-5 items-end" v-if="controlsOpen">
+          <router-link :to="`/groups/${currentGroup!.id}/add-expense`" class="flex gap-5 items-center">
+            <span class="font-bold">Add Expense</span>
+            <div class="w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center">
+              <CreditCardIcon class="w-6 stroke-2 stroke-white"/>
+            </div>
+          </router-link>
+          <router-link :to="`/groups/${currentGroup!.id}/add-settlement`" class="flex gap-5 items-center">
+            <span class="font-bold">Add Settlement</span>
+            <div class="w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center">
+              <ScaleIcon class="w-6 stroke-2 stroke-white"/>
+            </div>
+          </router-link>
+        </div>
+      </Transition>
+      <button class="w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center" @click="toggleControls">
+        <PlusIcon class="w-6 stroke-2 stroke-white"/>
+      </button>
+    </div>
+    <Transition name="fade">
+      <div v-if="controlsOpen" class="fixed inset-0 bg-white bg-opacity-90" @click="closeControls"></div>
+    </Transition>
   </section>
 </template>

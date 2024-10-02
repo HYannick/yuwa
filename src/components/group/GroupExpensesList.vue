@@ -1,6 +1,6 @@
 <template>
   <div class="mb-10">
-    <GroupSectionHeader label="Expenses" :to="`/groups/${groupId}/add-expense`" :action-icon="PlusIcon"/>
+    <GroupSectionHeader label="Expenses" :to="`/groups/${groupId}/add-expense`" :header-icon="BanknotesIcon"/>
     <div v-if="expenses.length === 0">
       <img src="@/assets/illustrations/undraw_add_document.svg" alt="No expenses" class="w-1/2 mx-auto"/>
       <p class="text-center text-gray-500 mt-5">No expenses have been added yet.<br>Create a new one!</p>
@@ -29,16 +29,13 @@
 <script setup lang="ts">
 import {defineProps, onMounted, onUnmounted, ref} from 'vue';
 import {Expense} from '@/domain/Expense.ts';
-import {PlusIcon} from "@heroicons/vue/24/outline";
+import {BanknotesIcon, PlusIcon} from "@heroicons/vue/24/outline";
 import BaseRouterLinkButton from '@/components/BaseRouterLinkButton.vue';
 import GroupSectionHeader from '@/components/group/GroupSectionHeader.vue';
 import GroupExpenseCard from '@/components/group/GroupExpenseCard.vue';
-import {useRoute, useRouter} from 'vue-router';
 import {useSidebarHistoryState} from '@/composables/useSidebarHistoryState.ts';
 
 defineProps<{ groupId: any, expenses: Expense[] }>();
-const router = useRouter();
-const route = useRoute();
 const { pushTo, resetRoute, onBackButtonPressed} = useSidebarHistoryState();
 const selectedExpense = ref<Expense | null >(null)
 
