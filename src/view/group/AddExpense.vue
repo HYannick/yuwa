@@ -223,7 +223,7 @@ watch(amount, () => {
 </script>
 
 <template>
-  <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
+  <section class="bg-zinc-100 dark:bg-zinc-900 w-screen min-h-screen md:max-w-screen min-h-screen-xl bg-zinc-100 dark:bg-zinc-900 md:m-auto p-5">
     <div class="flex justify-between">
       <BackRouterButton :to="`/groups/${groupId}`" />
     </div>
@@ -295,7 +295,7 @@ watch(amount, () => {
                   type="number"
                   size="small"
                   color="bg-white"
-                  text-color="text-gray-800"
+                  text-color="text-gray-800 dark:text-zinc-400"
                   step="0.01"
                   class="w-full text-center border-2"
                   :disabled="!selectedParticipantIds.includes(participant.id)"

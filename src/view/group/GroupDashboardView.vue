@@ -113,50 +113,53 @@ const closeControls = () => {
 </script>
 
 <template>
-  <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
+  <section class="bg-zinc-100 dark:bg-zinc-900 w-screen min-h-screen md:max-w-screen min-h-screen-xl md:m-auto p-5">
     <div class="flex justify-between">
       <BackRouterButton/>
       <button @click="openGroupSettings" class="flex items-center p-2">
-        <EllipsisVerticalIcon class="w-8 stroke-2"/>
+        <EllipsisVerticalIcon class="w-8 stroke-2 text-gray-800 dark:text-zinc-400"/>
       </button>
     </div>
-    <div v-if="loading">
-      <p>Loading...</p>
-    </div>
-    <template v-else-if="currentGroup">
-      <GroupHeader :group="currentGroup" :expenses="expenses" :settlements="settlements"/>
-      <div class="flex justify-center gap-4 mb-5 lg:hidden">
-        <div class="relative" v-for="tab in tabs" :key="tab.name">
-          <button
-              @click="switchTab(tab.name)"
-              :class="`flex gap-2 px-4 py-2 font-bold rounded-xl transition-all duration-300 ${currentTab !== tab.name ? 'bg-gray-100 text-gray-800' : 'bg-gray-800 text-white'}`"
-          >
-            <component :is="tab.icon" class="w-6 stroke-2"/>
-            {{ tab.name }}
-          </button>
-        </div>
+    <Transition name="fade" mode="out-in">
+      <div v-if="loading" class="flex flex-col w-full mt-40 justify-center items-center">
+        <img src="@/assets/illustrations/undraw_loading.svg" alt="loading" class="w-2/3"/>
+        <p class="text-2xl mt-10">One moment...</p>
       </div>
-      <div class="-mx-5 p-5 rounded-3xl">
-        <div class="lg:hidden">
-          <div v-if="currentTab === 'Expenses'">
-            <GroupExpensesList :groupId="id" :expenses="expenses" :participants="participants"/>
+      <div v-else-if="currentGroup">
+        <GroupHeader :group="currentGroup" :expenses="expenses" :settlements="settlements"/>
+        <div class="flex justify-center gap-4 mb-5 lg:hidden">
+          <div class="relative" v-for="tab in tabs" :key="tab.name">
+            <button
+                @click="switchTab(tab.name)"
+                :class="`flex gap-2 px-4 py-2 font-bold rounded-xl transition-all duration-300 ${currentTab !== tab.name ? 'bg-gray-100 text-gray-800 dark:text-zinc-400' : 'bg-gray-800 dark:bg-gray-50 text-white'}`"
+            >
+              <component :is="tab.icon" class="w-6 stroke-2"/>
+              {{ tab.name }}
+            </button>
           </div>
-          <div v-else-if="currentTab === 'Balances'" class="my-10">
-            <GroupBalance :expenses="expenses" :settlements="settlements" :participants="participants" :currency="currentGroup.currency"/>
+        </div>
+        <div class="-mx-5 p-5 rounded-3xl">
+          <div class="lg:hidden">
+            <div v-if="currentTab === 'Expenses'">
+              <GroupExpensesList :groupId="id" :expenses="expenses" :participants="participants"/>
+            </div>
+            <div v-else-if="currentTab === 'Balances'" class="my-10">
+              <GroupBalance :expenses="expenses" :settlements="settlements" :participants="participants" :currency="currentGroup.currency"/>
+              <GroupSettlementsList :settlements="settlements" :group-id="currentGroup.id" :participants="participants"/>
+            </div>
+          </div>
+          <div class="hidden lg:flex gap-10">
+            <div class="w-2/3">
+              <GroupExpensesList :groupId="id" :expenses="expenses"/>
+            </div>
+            <div class="w-1/3">
+              <GroupBalance :expenses="expenses" :settlements="settlements" :participants="participants" :currency="currentGroup.currency"/>
+            </div>
             <GroupSettlementsList :settlements="settlements" :group-id="currentGroup.id" :participants="participants"/>
           </div>
         </div>
-        <div class="hidden lg:flex gap-10">
-          <div class="w-2/3">
-            <GroupExpensesList :groupId="id" :expenses="expenses"/>
-          </div>
-          <div class="w-1/3">
-            <GroupBalance :expenses="expenses" :settlements="settlements" :participants="participants" :currency="currentGroup.currency"/>
-          </div>
-          <GroupSettlementsList :settlements="settlements" :group-id="currentGroup.id" :participants="participants"/>
-        </div>
       </div>
-    </template>
+    </Transition>
     <Transition name="slide">
       <SettingsSidebar v-if="groupSettingsVisible && currentGroup" :group="currentGroup" :participants="participants" @close="closeGroupSettings"/>
     </Transition>
@@ -165,24 +168,24 @@ const closeControls = () => {
         <div class="flex flex-col gap-5 mb-5 items-end" v-if="controlsOpen">
           <router-link :to="`/groups/${currentGroup!.id}/add-expense`" class="flex gap-5 items-center">
             <span class="font-bold">Add Expense</span>
-            <div class="w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center">
+            <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-gray-50 flex items-center justify-center">
               <CreditCardIcon class="w-6 stroke-2 stroke-white"/>
             </div>
           </router-link>
           <router-link :to="`/groups/${currentGroup!.id}/add-settlement`" class="flex gap-5 items-center">
             <span class="font-bold">Add Settlement</span>
-            <div class="w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center">
+            <div class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-gray-50 flex items-center justify-center">
               <ScaleIcon class="w-6 stroke-2 stroke-white"/>
             </div>
           </router-link>
         </div>
       </Transition>
-      <button class="w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center" @click="toggleControls">
+      <button class="w-16 h-16 rounded-2xl bg-gray-800 dark:bg-gray-50 flex items-center justify-center" @click="toggleControls">
         <PlusIcon class="w-6 stroke-2 stroke-white"/>
       </button>
     </div>
     <Transition name="fade">
-      <div v-if="controlsOpen" class="fixed inset-0 bg-white bg-opacity-90" @click="closeControls"></div>
+      <div v-if="controlsOpen" class="fixed inset-0 bg-zinc-100 dark:bg-zinc-900 bg-opacity-90" @click="closeControls"></div>
     </Transition>
   </section>
 </template>

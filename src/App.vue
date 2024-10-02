@@ -1,21 +1,27 @@
 <script setup lang="ts">
 import PWABadge from './components/PWABadge.vue'
 import {RouterView, useRouter} from 'vue-router'
-import {ref} from 'vue';
+import {onMounted, provide, ref} from 'vue';
+import {useTheme} from '@/composables/useTheme.ts';
 
 const router = useRouter()
 const transitionName = ref('')
 
+const { setTheme } = useTheme();
 
 router.afterEach((to, from) => {
   const toDepth = to.path.split('/').length
   const fromDepth = from.path.split('/').length
   transitionName.value = toDepth < fromDepth ? 'prev' : 'next'
 })
+
+onMounted(() => {
+  setTheme();
+})
 </script>
 
 <template>
-  <main>
+  <main class="bg-zinc-100 dark:bg-zinc-900">
     <RouterView v-slot="{ Component, route}">
       <Transition :name="transitionName">
         <div :key="route.path">
@@ -42,7 +48,6 @@ main > :first-child {
 
 main > * {
   grid-area: main; /* Transition: make sections overlap on same cell */
-  background-color: white;
   position: relative;
 }
 

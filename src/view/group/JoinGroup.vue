@@ -1,6 +1,6 @@
 <!-- src/components/JoinGroup.vue -->
 <template>
-  <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen flex flex-col items-center">
+  <section class="bg-zinc-100 dark:bg-zinc-900 w-screen min-h-screen md:max-w-screen min-h-screen-xl md:m-auto p-5 flex flex-col items-center">
     <h3 class="text-5xl font-bold font-display my-10 text-center">
       <span v-if="error">Uh oh..</span>
       <span v-else-if="success"><span class="font-normal mb-2 text-4xl">Welcome to</span><br> <span

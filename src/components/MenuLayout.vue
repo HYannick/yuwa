@@ -6,7 +6,7 @@
   </Teleport>
   <Teleport to="body">
     <Transition name="fade">
-      <div v-if="menuOpen" class="fixed inset-0 bg-white bg-opacity-90 z-40" @click="$emit('close')"></div>
+      <div v-if="menuOpen" class="fixed inset-0 bg-zinc-100 dark:bg-zinc-900 bg-opacity-40 dark:bg-opacity-90 z-40" @click="$emit('close')"></div>
     </Transition>
   </Teleport>
 </template>

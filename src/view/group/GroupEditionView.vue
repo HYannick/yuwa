@@ -17,7 +17,7 @@ const addParticipant = () => {
 </script>
 
 <template>
-  <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
+  <section class="bg-zinc-100 dark:bg-zinc-900 w-screen min-h-screen md:max-w-screen min-h-screen-xl md:m-auto p-5">
     <div class="flex flex-col h-full">
       <router-link to="groupCreate" tag="button">Back</router-link>
       <h2 class="font-body text-2xl font-bold my-5">Create your group</h2>
@@ -28,7 +28,7 @@ const addParticipant = () => {
         <div class="mb-4 flex-1">
           <p class="mb-4 font-bold">Participants</p>
           <div class="flex flex-col gap-2 mb-4">
-            <div v-for="(_, i) in groupForm.participants" class="relative rounded-xl p-4 w-full bg-white border-2  border-gray-100 font-semibold">
+            <div v-for="(_, i) in groupForm.participants" class="relative rounded-xl p-4 w-full bg-zinc-100 dark:bg-zinc-900 border-2  border-gray-100 font-semibold">
               <input
                   class="w-full h-full border-transparent outline-0"
                   v-model="groupForm.participants[i]"
@@ -38,7 +38,7 @@ const addParticipant = () => {
             </div>
           </div>
           <div class="flex justify-end">
-            <BaseButton type="button" bg-color="bg-gray-800" @click="addParticipant">Add participant</BaseButton>
+            <BaseButton type="button" bg-color="bg-gray-800 dark:bg-gray-50" @click="addParticipant">Add participant</BaseButton>
           </div>
         </div>
         <BaseButton type="submit">Create the group</BaseButton>

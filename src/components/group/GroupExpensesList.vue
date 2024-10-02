@@ -5,12 +5,12 @@
       <img src="@/assets/illustrations/undraw_add_document.svg" alt="No expenses" class="w-1/2 mx-auto"/>
       <p class="text-center text-gray-500 mt-5">No expenses have been added yet.<br>Create a new one!</p>
       <BaseRouterLinkButton :to="`/groups/${groupId}/add-expense`" size="small"
-                            class="w-1/2  mx-auto mt-5 flex items-center justify-center px-4 h-12 bg-gray-800 text-white rounded-xl">
+                            class="w-1/2  mx-auto mt-5 flex items-center justify-center px-4 h-12 bg-gray-800 dark:bg-gray-50 text-white rounded-xl">
         Add Expense
       </BaseRouterLinkButton>
     </div>
     <ul v-else class="flex flex-col gap-3">
-      <li v-for="expense in expenses" :key="expense.id" class="flex justify-between bg-gray-100 p-4 items-center rounded-xl" @click="openDetails(expense)">
+      <li v-for="expense in expenses" :key="expense.id" class="flex justify-between bg-zinc-200 dark:bg-zinc-700 p-4 items-center rounded-xl" @click="openDetails(expense)">
         <div>
           <h3 class="font-bold">{{ expense.description }}</h3>
           <p class="text-sm">Paid by: <span class="text-orange-800">{{ expense.paid_by.name }}</span>

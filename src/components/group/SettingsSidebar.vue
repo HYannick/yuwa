@@ -21,7 +21,7 @@
     <div>
       <p class="text font-semibold mb-4">Participants</p>
       <div class="flex gap-2">
-        <div class="rounded bg-white py-2 px-4" v-for="participant in participants">
+        <div class="rounded bg-zinc-100 dark:bg-zinc-900 py-2 px-4" v-for="participant in participants">
           <span class="text-sm font-bold">{{ participant.name }}</span></div>
       </div>
     </div>

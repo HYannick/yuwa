@@ -2,7 +2,7 @@
   <div class="mt-5 rounded-3xl">
     <h1 class="text-center font-display text-4xl font-bold">{{ group.name }}</h1>
     <hr class="h-1 mt-4 mx-auto w-52 bg-gray-100 rounded border-transparent"/>
-    <div class="p-4 bg-white rounded-xl w-10/12 mx-auto">
+    <div class="p-4 bg-zinc-100 dark:bg-zinc-900 rounded-xl w-10/12 mx-auto">
         <p v-if="userBalance > 0" class="text-center">
           You are owed <strong>{{ formatCurrency(userBalance, group.currency || 'EUR') }}</strong> by the group.
         </p>

@@ -8,8 +8,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Gowun Batang', 'sans-serif'],
-        body: ['Anaheim', 'sans-serif'],
+        display: ['Merriweather', 'sans-serif'],
+        body: ['Nunito Sans Variable', 'sans-serif'],
       }
     },
   },

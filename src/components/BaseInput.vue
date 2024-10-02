@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
   required: false,
   size: 'medium',
   color: 'bg-gray-100',
-  textColor: 'text-gray-800'
+  textColor: 'text-gray-800 dark:text-zinc-400'
 })
 
 const sizeCss = computed(() => {

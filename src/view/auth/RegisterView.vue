@@ -1,8 +1,8 @@
 <!-- src/components/SignUp.vue -->
 <template>
-  <section class="w-screen md:max-w-screen-xl md:m-auto p-4 h-screen flex flex-col">
-    <h1 class="text-4xl font-display font-extrabold text-gray-800">Yuwa</h1>
-    <div class="flex flex-col items-center text-gray-800">
+  <section class="bg-zinc-100 dark:bg-zinc-900 w-screen min-h-screen md:max-w-screen min-h-screen-xl bg-white dark:bg-gray-800 bg-white dark:bg-gray-800md:m-auto p-4 flex flex-col">
+    <h1 class="text-4xl font-display font-extrabold text-gray-800 dark:text-zinc-400">Yuwa</h1>
+    <div class="flex flex-col items-center text-gray-800 dark:text-zinc-400">
       <img src="@/assets/illustrations/undraw_sign_up.svg" alt="Yuwa logo" class="w-3/4 mt-14"/>
       <h3 class="text-3xl font-bold font-body mt-5">Create an account</h3>
       <p class="mt-1">Already in the crew?

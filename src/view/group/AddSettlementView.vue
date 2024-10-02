@@ -76,7 +76,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="w-screen md:max-w-screen-xl md:m-auto p-5 h-screen">
+  <section class="bg-zinc-100 dark:bg-zinc-900 w-screen min-h-screen md:max-w-screen min-h-screen-xl md:m-auto p-5">
     <div class="flex justify-between">
 
       <BackRouterButton :to="`/groups/${props.id}`" />

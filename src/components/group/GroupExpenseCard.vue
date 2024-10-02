@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-0 top-0 overflow-y-scroll z-50 left-0 right-0 bg-white p-4 shadow-lg rounded-t-xl">
+  <div class="fixed bottom-0 top-0 overflow-y-scroll z-50 left-0 right-0 bg-zinc-100 dark:bg-zinc-900 p-4 shadow-lg rounded-t-xl">
     <div class="relative">
       <div class="flex justify-between">
         <BackButton @click="$emit('closeDetails')"/>

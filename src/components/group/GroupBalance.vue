@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5 rounded-xl bg-white">
+  <div class="p-5 rounded-xl bg-zinc-100 dark:bg-zinc-900">
     <div v-if="Object.keys(balances).length === 0">
       <img src="@/assets/illustrations/undraw_pie_chart.svg" alt="No balance" class="w-1/2 mx-auto"/>
       <p class="text-gray-500 text-center mt-5">No Expenses yet so...no chart!</p>
